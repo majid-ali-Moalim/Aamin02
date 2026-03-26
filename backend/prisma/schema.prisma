@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+  PATIENT
+}
+
+enum EmployeeType {
+  DISPATCHER
+  DRIVER
+  NURSE
+}
+
+enum EmergencyRequestStatus {
+  PENDING
+  ASSIGNED
+  ON_THE_WAY
+  ARRIVED
+  PICKED_UP
+  TRANSPORTING
+  AT_HOSPITAL
+  COMPLETED
+  CANCELLED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AmbulanceStatus {
+  AVAILABLE
+  ON_DUTY
+  MAINTENANCE
+  UNAVAILABLE
+}
+
+enum ReferralStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+}
+
+model User {
+  id           String         @id @default(cuid())
+  username     String         @unique
+  email        String         @unique
+  passwordHash String
+  role         Role           @default(PATIENT)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  employee     Employee?
+  patient      Patient?
+  notifications Notification[]
+  activityLogs ActivityLog[]
+
+  @@map("users")
+}
+
+model Employee {
+  id                  String               @id @default(cuid())
+  userId              String               @unique
+  employeeType        EmployeeType
+  status              String               @default("ACTIVE")
+  assignedAmbulanceId String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  user                User                 @relation(fields: [userId], references: [id])
+  assignedAmbulance   Ambulance?           @relation(fields: [assignedAmbulanceId], references: [id])
+  dispatchedRequests  EmergencyRequest[]   @relation("DispatcherRequests")
+  drivenRequests      EmergencyRequest[]   @relation("DriverRequests")
+
+  @@map("employees")
+}
+
+model Patient {
+  id                String               @id @default(cuid())
+  userId            String               @unique
+  fullName          String
+  phone             String
+  address           String
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  user              User                 @relation(fields: [userId], references: [id])
+  emergencyRequests EmergencyRequest[]
+
+  @@map("patients")
+}
+
+model Ambulance {
+  id                String               @id @default(cuid())
+  ambulanceNumber   String               @unique
+  plateNumber       String               @unique
+  status            AmbulanceStatus      @default(AVAILABLE)
+  location          String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  employees         Employee[]
+  emergencyRequests EmergencyRequest[]
+
+  @@map("ambulances")
+}
+
+model EmergencyRequest {
+  id               String                  @id @default(cuid())
+  trackingCode     String                  @unique
+  patientId        String
+  dispatcherId     String?
+  driverId         String?
+  ambulanceId      String?
+  status           EmergencyRequestStatus  @default(PENDING)
+  priority         Priority                @default(MEDIUM)
+  pickupLocation   String
+  destination      String?
+  notes            String?
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  patient          Patient                 @relation(fields: [patientId], references: [id])
+  dispatcher       Employee?               @relation("DispatcherRequests", fields: [dispatcherId], references: [id])
+  driver           Employee?               @relation("DriverRequests", fields: [driverId], references: [id])
+  ambulance        Ambulance?              @relation(fields: [ambulanceId], references: [id])
+  referrals        Referral[]
+
+  @@map("emergency_requests")
+}
+
+model Referral {
+  id                 String            @id @default(cuid())
+  emergencyRequestId String            @unique
+  hospitalName       String
+  status             ReferralStatus    @default(PENDING)
+  notes              String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  emergencyRequest   EmergencyRequest  @relation(fields: [emergencyRequestId], references: [id])
+
+  @@map("referrals")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  userId    String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  entityType String?
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@map("activity_logs")
+}
