@@ -4,24 +4,26 @@
 
 @layer base {
   :root {
-    --primary: #D32F2F;
-    --primary-foreground: #ffffff;
-    --secondary: #f5f5f5;
-    --secondary-foreground: #1f2937;
-    --accent: #e5e7eb;
-    --accent-foreground: #1f2937;
-    --destructive: #dc2626;
-    --destructive-foreground: #ffffff;
-    --muted: #6b7280;
-    --muted-foreground: #9ca3af;
-    --card: #ffffff;
-    --card-foreground: #1f2937;
-    --border: #e5e7eb;
-    --input: #ffffff;
-    --ring: #d32f2f;
-    --success: #16a34a;
-    --warning: #f59e0b;
-    --info: #2563eb;
+    --background: 130 60% 98%; /* Powder Blue / Off-White background */
+    --foreground: 222 47% 11%; /* Charcoal/Midnight text */
+    --primary: 355 78% 56%;    /* Emergency Red */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 50% 23%;  /* Midnight Blue for sidebars/navigation */
+    --secondary-foreground: 210 40% 98%;
+    --accent: 203 39% 44%;     /* Clinical Blue for actions */
+    --accent-foreground: 210 40% 98%;
+    --destructive: 355 78% 46%;
+    --destructive-foreground: 210 40% 98%;
+    --muted: 215 15% 90%;
+    --muted-foreground: 215 15% 45%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --border: 215 15% 85%;
+    --input: 0 0% 100%;
+    --ring: 355 78% 56%;
+    --success: 152 43% 52%;
+    --warning: 43 100% 51%;
+    --info: 203 39% 44%;
     --radius: 0.75rem;
   }
 

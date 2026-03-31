@@ -7,6 +7,8 @@ import { PatientsModule } from './patients/patients.module';
 import { AmbulancesModule } from './ambulances/ambulances.module';
 import { EmergencyRequestsModule } from './emergency-requests/emergency-requests.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { SystemSetupModule } from './system-setup/system-setup.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { NotificationsModule } from './notifications/notifications.module';
     AmbulancesModule,
     EmergencyRequestsModule,
     NotificationsModule,
+    SystemSetupModule,
+    ReportsModule,
   ],
   controllers: [],
   providers: [],

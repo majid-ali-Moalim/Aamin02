@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { Activity, Users, Truck, AlertCircle, TrendingUp, Clock, CheckCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Activity, Users, Truck, AlertCircle, TrendingUp, Clock, CheckCircle, Loader2 } from 'lucide-react'
+import { reportsService } from '@/lib/api'
 
 interface DashboardStats {
   activeEmergencies: number
@@ -23,81 +24,83 @@ interface RecentActivity {
 }
 
 export default function AdminDashboard() {
-  const [stats] = useState<DashboardStats>({
-    activeEmergencies: 12,
-    availableAmbulances: 8,
-    totalUsers: 156,
-    totalDrivers: 24,
-    totalPatients: 892,
-    completedCases: 1234,
-    pendingRequests: 5,
-    referralCount: 67
-  })
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const [recentActivity] = useState<RecentActivity[]>([
-    {
-      id: '1',
-      type: 'emergency',
-      description: 'New emergency request from Mogadishu',
-      time: '2 minutes ago',
-      status: 'warning'
-    },
-    {
-      id: '2',
-      type: 'ambulance',
-      description: 'Ambulance AAM-001 completed assignment',
-      time: '15 minutes ago',
-      status: 'success'
-    },
-    {
-      id: '3',
-      type: 'user',
-      description: 'New driver registered: Ahmed Mohamed',
-      time: '1 hour ago',
-      status: 'success'
-    },
-    {
-      id: '4',
-      type: 'referral',
-      description: 'Referral sent to Benadir Hospital',
-      time: '2 hours ago',
-      status: 'success'
-    },
-    {
-      id: '5',
-      type: 'emergency',
-      description: 'Emergency request cancelled - false alarm',
-      time: '3 hours ago',
-      status: 'error'
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true)
+        const data = await reportsService.getDashboardStats()
+        setStats(data.stats)
+        setRecentActivity(data.recentActivity)
+        setError(null)
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err)
+        setError('Failed to load dashboard data. Please try again later.')
+      } finally {
+        setLoading(false)
+      }
     }
-  ])
+
+    fetchDashboardData()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+        <p className="text-gray-500 font-medium tracking-wide">Initializing real-time monitoring...</p>
+      </div>
+    )
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="p-8 bg-red-50 border border-red-200 rounded-2xl flex items-center space-x-4 max-w-2xl mx-auto mt-10">
+        <AlertCircle className="w-8 h-8 text-red-500" />
+        <div>
+          <h3 className="text-lg font-bold text-red-900">Dashboard Synchronisation Failed</h3>
+          <p className="text-red-700">{error || 'Unable to connect to the medical dispatch engine.'}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all font-black text-xs uppercase tracking-widest shadow-lg shadow-red-200"
+          >
+            Reconnect System
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   const statCards = [
     {
       title: 'Active Emergencies',
       value: stats.activeEmergencies,
-      change: '+2',
+      change: stats.activeEmergencies > 0 ? `+${stats.activeEmergencies}` : '0',
       icon: Activity,
       color: 'bg-blue-500'
     },
     {
       title: 'Available Ambulances',
       value: stats.availableAmbulances,
-      change: '+1',
+      change: 'Active Now',
       icon: Truck,
       color: 'bg-green-500'
     },
     {
       title: 'Total Users',
       value: stats.totalUsers,
-      change: '+12',
+      change: `+${stats.totalUsers}`,
       icon: Users,
       color: 'bg-purple-500'
     },
     {
       title: 'Completed Cases',
       value: stats.completedCases,
-      change: '+45',
+      change: 'Record Total',
       icon: CheckCircle,
       color: 'bg-emerald-500'
     }

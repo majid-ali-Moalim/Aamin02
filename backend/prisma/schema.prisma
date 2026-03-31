@@ -13,20 +13,29 @@ enum Role {
   PATIENT
 }
 
-enum EmployeeType {
-  DISPATCHER
-  DRIVER
-  NURSE
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum BloodType {
+  A_POSITIVE
+  A_NEGATIVE
+  B_POSITIVE
+  B_NEGATIVE
+  AB_POSITIVE
+  AB_NEGATIVE
+  O_POSITIVE
+  O_NEGATIVE
 }
 
 enum EmergencyRequestStatus {
   PENDING
   ASSIGNED
-  ON_THE_WAY
-  ARRIVED
-  PICKED_UP
+  DISPATCHED
+  ON_SCENE
   TRANSPORTING
-  AT_HOSPITAL
+  ARRIVED_HOSPITAL
   COMPLETED
   CANCELLED
 }
@@ -36,6 +45,14 @@ enum Priority {
   MEDIUM
   HIGH
   CRITICAL
+}
+
+enum RequestSource {
+  PHONE_CALL
+  WALK_IN
+  STAFF
+  REFERRAL
+  OTHER
 }
 
 enum AmbulanceStatus {
@@ -52,104 +69,358 @@ enum ReferralStatus {
   COMPLETED
 }
 
-model User {
-  id           String         @id @default(cuid())
-  username     String         @unique
-  email        String         @unique
-  passwordHash String
-  role         Role           @default(PATIENT)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+model Region {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String?  @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  employee     Employee?
-  patient      Patient?
+  districts  District[]
+  stations   Station[]
+  patients   Patient[]
+  ambulances Ambulance[]
+  requests   EmergencyRequest[]
+
+  @@index([name])
+  @@map("regions")
+}
+
+model District {
+  id          String   @id @default(cuid())
+  name        String
+  regionId    String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  region     Region             @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  stations   Station[]
+  patients   Patient[]
+  ambulances Ambulance[]
+  requests   EmergencyRequest[]
+
+  @@unique([name, regionId])
+  @@index([regionId])
+  @@index([name])
+  @@map("districts")
+}
+
+model Station {
+  id          String   @id @default(cuid())
+  name        String
+  regionId    String
+  districtId  String
+  description String?
+  address     String?
+  phone       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  region     Region      @relation(fields: [regionId], references: [id], onDelete: Restrict)
+  district   District    @relation(fields: [districtId], references: [id], onDelete: Restrict)
+  ambulances Ambulance[]
+  employees  Employee[]
+
+  @@unique([name, districtId])
+  @@index([regionId])
+  @@index([districtId])
+  @@map("stations")
+}
+
+model Department {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  employees Employee[]
+
+  @@index([name])
+  @@map("departments")
+}
+
+model EmployeeRole {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  employees Employee[]
+
+  @@index([name])
+  @@map("employee_roles")
+}
+
+model EquipmentLevel {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ambulances Ambulance[]
+
+  @@index([name])
+  @@map("equipment_levels")
+}
+
+model IncidentCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  requests EmergencyRequest[]
+
+  @@index([name])
+  @@map("incident_categories")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(PATIENT)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  employee      Employee?
+  patient       Patient?
   notifications Notification[]
-  activityLogs ActivityLog[]
+  activityLogs  ActivityLog[]
 
   @@map("users")
 }
 
 model Employee {
-  id                  String               @id @default(cuid())
-  userId              String               @unique
-  employeeType        EmployeeType
-  status              String               @default("ACTIVE")
+  id        String  @id @default(cuid())
+  userId    String  @unique
+  firstName String?
+  lastName  String?
+  phone     String?
+  status    String  @default("ACTIVE")
+
+  employeeRoleId      String?
+  departmentId        String?
+  stationId           String?
   assignedAmbulanceId String?
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
 
-  user                User                 @relation(fields: [userId], references: [id])
-  assignedAmbulance   Ambulance?           @relation(fields: [assignedAmbulanceId], references: [id])
-  dispatchedRequests  EmergencyRequest[]   @relation("DispatcherRequests")
-  drivenRequests      EmergencyRequest[]   @relation("DriverRequests")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeRole      EmployeeRole? @relation(fields: [employeeRoleId], references: [id], onDelete: SetNull)
+  department        Department?   @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  station           Station?      @relation(fields: [stationId], references: [id], onDelete: SetNull)
+  assignedAmbulance Ambulance?    @relation(fields: [assignedAmbulanceId], references: [id], onDelete: SetNull)
+
+  dispatchedRequests EmergencyRequest[]   @relation("DispatcherRequests")
+  drivenRequests     EmergencyRequest[]   @relation("DriverRequests")
+  statusLogs         EmergencyStatusLog[] @relation("EmployeeStatusLogs")
+
+  @@index([employeeRoleId])
+  @@index([departmentId])
+  @@index([stationId])
+  @@index([assignedAmbulanceId])
+  @@index([status])
   @@map("employees")
 }
 
 model Patient {
-  id                String               @id @default(cuid())
-  userId            String               @unique
-  fullName          String
-  phone             String
-  address           String
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
+  id     String @id @default(cuid())
+  userId String @unique
 
-  user              User                 @relation(fields: [userId], references: [id])
+  patientCode String  @unique
+  fullName    String
+  age         Int?
+  gender      Gender?
+
+  phone          String
+  alternatePhone String?
+  email          String?
+  address String
+
+  regionId   String?
+  districtId String?
+
+  bloodType         BloodType?
+  conditions        String?
+  allergies         String?
+  insuranceProvider String?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  region            Region?            @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  district          District?          @relation(fields: [districtId], references: [id], onDelete: SetNull)
   emergencyRequests EmergencyRequest[]
 
+  @@index([fullName])
+  @@index([phone])
+  @@index([regionId])
+  @@index([districtId])
   @@map("patients")
 }
 
 model Ambulance {
-  id                String               @id @default(cuid())
-  ambulanceNumber   String               @unique
-  plateNumber       String               @unique
-  status            AmbulanceStatus      @default(AVAILABLE)
-  location          String?
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
+  id              String          @id @default(cuid())
+  ambulanceNumber String          @unique
+  plateNumber     String          @unique
+  status          AmbulanceStatus @default(AVAILABLE)
+  location        String?
+
+  vehicleBrand String?
+  vehicleModel String?
+  vehicleType  String?
+
+  regionId         String?
+  districtId       String?
+  stationId        String?
+  equipmentLevelId String?
+
+  crewCount Int     @default(0)
+  isActive  Boolean @default(true)
+
+  fuelLevel       Int?      @default(100)
+  mileage         Int?      @default(0)
+  lastMaintenance DateTime?
+  nextMaintenance DateTime?
+  notes           String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  region         Region?         @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  district       District?       @relation(fields: [districtId], references: [id], onDelete: SetNull)
+  station        Station?        @relation(fields: [stationId], references: [id], onDelete: SetNull)
+  equipmentLevel EquipmentLevel? @relation(fields: [equipmentLevelId], references: [id], onDelete: SetNull)
 
   employees         Employee[]
   emergencyRequests EmergencyRequest[]
 
+  @@index([regionId])
+  @@index([districtId])
+  @@index([stationId])
+  @@index([equipmentLevelId])
+  @@index([status])
   @@map("ambulances")
 }
 
 model EmergencyRequest {
-  id               String                  @id @default(cuid())
-  trackingCode     String                  @unique
-  patientId        String
-  dispatcherId     String?
-  driverId         String?
-  ambulanceId      String?
-  status           EmergencyRequestStatus  @default(PENDING)
-  priority         Priority                @default(MEDIUM)
-  pickupLocation   String
-  destination      String?
-  notes            String?
-  createdAt        DateTime                @default(now())
-  updatedAt        DateTime                @updatedAt
+  id           String @id @default(cuid())
+  trackingCode String @unique
 
-  patient          Patient                 @relation(fields: [patientId], references: [id])
-  dispatcher       Employee?               @relation("DispatcherRequests", fields: [dispatcherId], references: [id])
-  driver           Employee?               @relation("DriverRequests", fields: [driverId], references: [id])
-  ambulance        Ambulance?              @relation(fields: [ambulanceId], references: [id])
-  referrals        Referral[]
+  patientId    String
+  dispatcherId String?
+  driverId     String?
+  ambulanceId  String?
 
+  incidentCategoryId String?
+  regionId           String?
+  districtId         String?
+
+  status   EmergencyRequestStatus @default(PENDING)
+  priority Priority               @default(MEDIUM)
+
+  callerName    String?
+  callerPhone   String?
+  requestSource RequestSource @default(PHONE_CALL)
+
+  pickupLocation      String
+  pickupLandmark      String?
+  destination         String?
+  destinationLandmark String?
+
+  patientCondition    String?
+  symptoms            String?
+  notes               String?
+  manualDispatchNotes String?
+
+  assignedAt           DateTime?
+  dispatchedAt         DateTime?
+  arrivedAtSceneAt     DateTime?
+  departedSceneAt      DateTime?
+  arrivedDestinationAt DateTime?
+  completedAt          DateTime?
+  cancelledAt          DateTime?
+
+  responseMinutes Int?
+  serviceMinutes  Int?
+
+  cancellationReason String?
+  isActive           Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patient    Patient    @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  dispatcher Employee?  @relation("DispatcherRequests", fields: [dispatcherId], references: [id], onDelete: SetNull)
+  driver     Employee?  @relation("DriverRequests", fields: [driverId], references: [id], onDelete: SetNull)
+  ambulance  Ambulance? @relation(fields: [ambulanceId], references: [id], onDelete: SetNull)
+
+  incidentCategory IncidentCategory? @relation(fields: [incidentCategoryId], references: [id], onDelete: SetNull)
+  region           Region?           @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  district         District?         @relation(fields: [districtId], references: [id], onDelete: SetNull)
+
+  referrals  Referral[]
+  statusLogs EmergencyStatusLog[]
+
+  @@index([patientId])
+  @@index([dispatcherId])
+  @@index([driverId])
+  @@index([ambulanceId])
+  @@index([incidentCategoryId])
+  @@index([regionId])
+  @@index([districtId])
+  @@index([status])
+  @@index([priority])
+  @@index([createdAt])
   @@map("emergency_requests")
 }
 
-model Referral {
-  id                 String            @id @default(cuid())
-  emergencyRequestId String            @unique
-  hospitalName       String
-  status             ReferralStatus    @default(PENDING)
-  notes              String?
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+model EmergencyStatusLog {
+  id                  String                  @id @default(cuid())
+  emergencyRequestId  String
+  fromStatus          EmergencyRequestStatus?
+  toStatus            EmergencyRequestStatus
+  notes               String?
+  changedByEmployeeId String?
+  createdAt           DateTime                @default(now())
 
-  emergencyRequest   EmergencyRequest  @relation(fields: [emergencyRequestId], references: [id])
+  emergencyRequest  EmergencyRequest @relation(fields: [emergencyRequestId], references: [id], onDelete: Cascade)
+  changedByEmployee Employee?        @relation("EmployeeStatusLogs", fields: [changedByEmployeeId], references: [id], onDelete: SetNull)
+
+  @@index([emergencyRequestId])
+  @@index([changedByEmployeeId])
+  @@map("emergency_status_logs")
+}
+
+model Referral {
+  id                 String         @id @default(cuid())
+  emergencyRequestId String         @unique
+  hospitalName       String
+  status             ReferralStatus @default(PENDING)
+  notes              String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  emergencyRequest EmergencyRequest @relation(fields: [emergencyRequestId], references: [id], onDelete: Cascade)
 
   @@map("referrals")
 }
@@ -162,8 +433,9 @@ model Notification {
   userId    String
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("notifications")
 }
 
@@ -176,7 +448,9 @@ model ActivityLog {
   metadata   Json?
   createdAt  DateTime @default(now())
 
-  user       User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([entityType, entityId])
   @@map("activity_logs")
 }

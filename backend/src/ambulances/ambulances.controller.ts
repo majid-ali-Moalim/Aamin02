@@ -62,6 +62,27 @@ export class AmbulancesController {
     return this.ambulancesService.update(id, updateAmbulanceDto);
   }
 
+  @Patch(':id/status')
+  @Roles('ADMIN', 'DISPATCHER')
+  @ApiOperation({ summary: 'Update ambulance status' })
+  updateStatus(@Param('id') id: string, @Body() body: { status: AmbulanceStatus }) {
+    const { status } = body
+    if (!Object.values(AmbulanceStatus).includes(status)) {
+      throw new BadRequestException(`Invalid status. Must be one of: ${Object.values(AmbulanceStatus).join(', ')}`);
+    }
+    return this.ambulancesService.updateStatus(id, status);
+  }
+
+  @Patch(':id/assign-driver')
+  @Roles('ADMIN', 'DISPATCHER')
+  @ApiOperation({ summary: 'Assign driver to ambulance' })
+  assignDriver(@Param('id') id: string, @Body() body: { driverEmployeeId: string }) {
+    if (!body.driverEmployeeId) {
+      throw new BadRequestException('driverEmployeeId is required');
+    }
+    return this.ambulancesService.assignDriver(id, body.driverEmployeeId);
+  }
+
   @Delete(':id')
   @Roles('ADMIN')
   @ApiOperation({ summary: 'Delete ambulance' })

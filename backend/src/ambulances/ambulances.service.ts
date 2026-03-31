@@ -12,8 +12,13 @@ export class AmbulancesService {
         employees: {
           include: {
             user: true,
+            employeeRole: true,
           },
         },
+        region: true,
+        district: true,
+        station: true,
+        equipmentLevel: true,
         emergencyRequests: true,
       },
       orderBy: { createdAt: 'desc' },
@@ -27,49 +32,68 @@ export class AmbulancesService {
         employees: {
           include: {
             user: true,
+            employeeRole: true,
           },
         },
+        region: true,
+        district: true,
+        station: true,
+        equipmentLevel: true,
         emergencyRequests: true,
       },
     });
   }
 
-  create(data: Prisma.AmbulanceCreateInput) {
+  create(data: any) {
+    // We use 'any' to allow incoming IDs for relations before DTOs are fully strictly typed
+    const { regionId, districtId, stationId, equipmentLevelId, ...rest } = data;
+
     return this.prisma.ambulance.create({
-      data,
+      data: {
+        ...rest,
+        region: regionId ? { connect: { id: regionId } } : undefined,
+        district: districtId ? { connect: { id: districtId } } : undefined,
+        station: stationId ? { connect: { id: stationId } } : undefined,
+        equipmentLevel: equipmentLevelId ? { connect: { id: equipmentLevelId } } : undefined,
+      },
       include: {
         employees: {
           include: {
             user: true,
+            employeeRole: true,
           },
         },
+        region: true,
+        district: true,
+        station: true,
+        equipmentLevel: true,
       },
     });
   }
 
-  update(id: string, data: Prisma.AmbulanceUpdateInput) {
+  update(id: string, data: any) {
+    const { regionId, districtId, stationId, equipmentLevelId, ...rest } = data;
+
     return this.prisma.ambulance.update({
       where: { id },
-      data,
+      data: {
+        ...rest,
+        region: regionId ? { connect: { id: regionId } } : undefined,
+        district: districtId ? { connect: { id: districtId } } : undefined,
+        station: stationId ? { connect: { id: stationId } } : undefined,
+        equipmentLevel: equipmentLevelId ? { connect: { id: equipmentLevelId } } : undefined,
+      },
       include: {
         employees: {
           include: {
             user: true,
+            employeeRole: true,
           },
         },
-      },
-    });
-  }
-
-  assignDriver(id: string, driverEmployeeId: string) {
-    return this.prisma.employee.update({
-      where: { id: driverEmployeeId },
-      data: {
-        assignedAmbulanceId: id,
-      },
-      include: {
-        user: true,
-        assignedAmbulance: true,
+        region: true,
+        district: true,
+        station: true,
+        equipmentLevel: true,
       },
     });
   }
@@ -81,11 +105,65 @@ export class AmbulancesService {
         employees: {
           include: {
             user: true,
+            employeeRole: true,
           },
         },
+        region: true,
+        district: true,
+        station: true,
+        equipmentLevel: true,
       },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  updateStatus(id: string, status: AmbulanceStatus) {
+    return this.prisma.ambulance.update({
+      where: { id },
+      data: { status },
+      include: {
+        employees: {
+          include: {
+            user: true,
+            employeeRole: true,
+          },
+        },
+        region: true,
+        district: true,
+        station: true,
+        equipmentLevel: true,
+      },
+    });
+  }
+
+  assignDriver(id: string, driverEmployeeId: string) {
+    const updateEmployee = this.prisma.employee.update({
+      where: { id: driverEmployeeId },
+      data: {
+        assignedAmbulanceId: id,
+      },
+      include: {
+        user: true,
+        assignedAmbulance: true,
+      },
+    });
+
+    const updateAmbulance = this.prisma.ambulance.update({
+      where: { id },
+      data: {
+        status: AmbulanceStatus.ON_DUTY,
+      },
+      include: {
+        employees: {
+          include: {
+            user: true,
+            employeeRole: true,
+          },
+        },
+      },
+    });
+
+    return Promise.all([updateEmployee, updateAmbulance]);
   }
 
   delete(id: string) {

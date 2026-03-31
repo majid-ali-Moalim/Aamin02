@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
+import { AmbulanceStatus, Role, EmergencyRequestStatus, Priority, ReferralStatus, Ambulance, Employee } from '@/types'
 
-const API_BASE_URL = 'http://localhost:5000'
+const API_BASE_URL = 'http://localhost:3001'
 
 class ApiService {
   private api: AxiosInstance
@@ -41,32 +42,37 @@ class ApiService {
   }
 
   // Generic request methods
-  async get<T>(url: string): Promise<T> {
+  async get<T = any>(url: string): Promise<T> {
     const response: AxiosResponse<T> = await this.api.get(url)
     return response.data
   }
 
-  async post<T>(url: string, data?: any): Promise<T> {
+  async post<T = any>(url: string, data?: any): Promise<T> {
     const response: AxiosResponse<T> = await this.api.post(url, data)
     return response.data
   }
 
-  async put<T>(url: string, data?: any): Promise<T> {
+  async put<T = any>(url: string, data?: any): Promise<T> {
     const response: AxiosResponse<T> = await this.api.put(url, data)
     return response.data
   }
 
-  async delete<T>(url: string): Promise<T> {
+  async delete<T = any>(url: string): Promise<T> {
     const response: AxiosResponse<T> = await this.api.delete(url)
+    return response.data
+  }
+
+  async patch<T = any>(url: string, data?: any): Promise<T> {
+    const response: AxiosResponse<T> = await this.api.patch(url, data)
     return response.data
   }
 }
 
 // Auth service
 export const authService = {
-  login: async (email: string, password: string) => {
+  login: async (username: string, password: string) => {
     const api = new ApiService()
-    return await api.post('/api/auth/login', { email, password })
+    return await api.post('/api/auth/login', { username, password })
   },
 
   getMe: async (token: string) => {
@@ -115,34 +121,79 @@ export const usersService = {
 
 // Ambulances service
 export const ambulancesService = {
-  getAll: async () => {
+  getAll: async (): Promise<Ambulance[]> => {
     const api = new ApiService()
-    return await api.get('/api/ambulances')
+    return await api.get<Ambulance[]>('/api/ambulances')
   },
 
-  getById: async (id: string) => {
+  getById: async (id: string): Promise<Ambulance> => {
     const api = new ApiService()
-    return await api.get(`/api/ambulances/${id}`)
+    return await api.get<Ambulance>(`/api/ambulances/${id}`)
   },
 
-  create: async (data: any) => {
+  create: async (data: any): Promise<Ambulance> => {
     const api = new ApiService()
-    return await api.post('/api/ambulances', data)
+    return await api.post<Ambulance>('/api/ambulances', data)
   },
 
-  update: async (id: string, data: any) => {
+  update: async (id: string, data: any): Promise<Ambulance> => {
     const api = new ApiService()
-    return await api.put(`/api/ambulances/${id}`, data)
+    return await api.patch<Ambulance>(`/api/ambulances/${id}`, data)
   },
 
-  delete: async (id: string) => {
+  delete: async (id: string): Promise<void> => {
     const api = new ApiService()
     return await api.delete(`/api/ambulances/${id}`)
   },
 
-  updateStatus: async (id: string, status: string) => {
+  updateStatus: async (id: string, status: string): Promise<Ambulance> => {
     const api = new ApiService()
-    return await api.put(`/api/ambulances/${id}/status`, { status })
+    return await api.patch<Ambulance>(`/api/ambulances/${id}/status`, { status })
+  },
+
+  getByStatus: async (status: string): Promise<Ambulance[]> => {
+    const api = new ApiService()
+    return await api.get<Ambulance[]>(`/api/ambulances/status/${status}`)
+  },
+
+  assignDriver: async (id: string, driverEmployeeId: string): Promise<Ambulance> => {
+    const api = new ApiService()
+    return await api.patch<Ambulance>(`/api/ambulances/${id}/assign-driver`, { driverEmployeeId })
+  }
+}
+
+// Employees service
+export const employeesService = {
+  getAll: async (roleId?: string, departmentId?: string): Promise<Employee[]> => {
+    const api = new ApiService()
+    let url = '/api/employees'
+    if (roleId || departmentId) {
+      const params = new URLSearchParams()
+      if (roleId) params.append('employeeRoleId', roleId)
+      if (departmentId) params.append('departmentId', departmentId)
+      url += `?${params.toString()}`
+    }
+    return await api.get<Employee[]>(url)
+  },
+
+  getById: async (id: string): Promise<Employee> => {
+    const api = new ApiService()
+    return await api.get<Employee>(`/api/employees/${id}`)
+  },
+
+  create: async (data: any): Promise<Employee> => {
+    const api = new ApiService()
+    return await api.post<Employee>('/api/employees', data)
+  },
+
+  update: async (id: string, data: any): Promise<Employee> => {
+    const api = new ApiService()
+    return await api.patch<Employee>(`/api/employees/${id}`, data)
+  },
+
+  delete: async (id: string): Promise<void> => {
+    const api = new ApiService()
+    return await api.delete(`/api/employees/${id}`)
   }
 }
 
@@ -203,12 +254,27 @@ export const emergencyRequestsService = {
 
   assignAmbulance: async (id: string, ambulanceId: string, driverId: string) => {
     const api = new ApiService()
-    return await api.put(`/api/emergency-requests/${id}/assign`, { ambulanceId, driverId })
+    return await api.patch(`/api/emergency-requests/${id}/assign`, { ambulanceId, driverId })
   },
 
   updateStatus: async (id: string, status: string) => {
     const api = new ApiService()
-    return await api.put(`/api/emergency-requests/${id}/status`, { status })
+    return await api.patch(`/api/emergency-requests/${id}/status`, { status })
+  },
+
+  getByTrackingCode: async (code: string) => {
+    const api = new ApiService()
+    return await api.get(`/api/emergency-requests/track/${code}`)
+  },
+
+  getAvailableAmbulances: async () => {
+    const api = new ApiService()
+    return await api.get('/api/emergency-requests/available/ambulances')
+  },
+
+  getAvailableDrivers: async () => {
+    const api = new ApiService()
+    return await api.get('/api/emergency-requests/available/drivers')
   }
 }
 
@@ -260,5 +326,51 @@ export const reportsService = {
   getStaffPerformance: async (filters?: any) => {
     const api = new ApiService()
     return await api.post('/api/reports/staff-performance', filters)
+  }
+}
+
+// System Setup Service
+export const systemSetupService = {
+  getRegions: async () => {
+    const api = new ApiService()
+    return await api.get('/api/setup/regions')
+  },
+  getDistricts: async (regionId?: string) => {
+    const api = new ApiService()
+    const url = regionId ? `/api/setup/districts?regionId=${regionId}` : '/api/setup/districts'
+    return await api.get(url)
+  },
+  getDepartments: async () => {
+    const api = new ApiService()
+    return await api.get('/api/setup/departments')
+  },
+  getRoles: async () => {
+    const api = new ApiService()
+    return await api.get('/api/setup/roles')
+  },
+  getEquipmentLevels: async () => {
+    const api = new ApiService()
+    return await api.get('/api/setup/equipment-levels')
+  },
+  getIncidentCategories: async () => {
+    const api = new ApiService()
+    return await api.get('/api/setup/incident-categories')
+  },
+  getStations: async (districtId?: string) => {
+    const api = new ApiService()
+    const url = districtId ? `/api/setup/stations?districtId=${districtId}` : '/api/setup/stations'
+    return await api.get(url)
+  },
+  create: async (model: string, data: any) => {
+    const api = new ApiService()
+    return await api.post(`/api/setup/${model}`, data)
+  },
+  update: async (model: string, id: string, data: any) => {
+    const api = new ApiService()
+    return await api.patch(`/api/setup/${model}/${id}`, data)
+  },
+  delete: async (model: string, id: string) => {
+    const api = new ApiService()
+    return await api.delete(`/api/setup/${model}/${id}`)
   }
 }

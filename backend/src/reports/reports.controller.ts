@@ -15,6 +15,11 @@ export class ReportsController {
     return this.reportsService.findAll();
   }
 
+  @Get('dashboard')
+  getDashboardStats() {
+    return this.reportsService.getDashboardStats();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.reportsService.findOne(id);

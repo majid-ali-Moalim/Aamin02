@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
+import { Role } from '@/types'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminTopBar from '@/components/layout/AdminTopBar'
 
@@ -18,7 +19,7 @@ export default function AdminLayout({
     if (!loading) {
       if (!user) {
         router.push('/login')
-      } else if (user.role !== 'admin') {
+      } else if (user.role !== Role.ADMIN) {
         router.push('/unauthorized')
       }
     }
@@ -35,7 +36,7 @@ export default function AdminLayout({
     )
   }
 
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== Role.ADMIN) {
     return null
   }
 

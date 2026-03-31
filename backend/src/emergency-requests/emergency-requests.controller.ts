@@ -14,6 +14,7 @@ import { EmergencyRequestsService } from './emergency-requests.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 import { EmergencyRequestStatus } from '@prisma/client';
 
 @ApiTags('emergency-requests')
@@ -37,6 +38,7 @@ export class EmergencyRequestsController {
     return this.emergencyRequestsService.findAll();
   }
 
+  @Public()
   @Get('track/:trackingCode')
   @ApiOperation({ summary: 'Track emergency request by tracking code' })
   findByTrackingCode(@Param('trackingCode') trackingCode: string) {
