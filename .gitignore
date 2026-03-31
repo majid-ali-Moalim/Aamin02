@@ -1,6 +1,5 @@
-node_modules
+node_modules/
+*.log
+*.tsbuildinfo
 .env
-dist
-.next
-coverage
-.prisma
+dist/
