@@ -1,0 +1,88 @@
+'use client'
+
+import React, { useState, useEffect, useCallback } from 'react'
+import { Activity, AlertCircle, X, Bell, ExternalLink } from 'lucide-react'
+import { notificationsService } from '@/lib/api'
+import Link from 'next/link'
+
+export default function LiveToastContainer() {
+  const [toasts, setToasts] = useState<any[]>([])
+  const [lastCheck, setLastCheck] = useState<Date>(new Date())
+
+  const removeToast = useCallback((id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id))
+  }, [])
+
+  useEffect(() => {
+    const checkNewNotifications = async () => {
+      try {
+        const recent = await notificationsService.getRecent()
+        if (recent && recent.length > 0) {
+          const newAlerts = recent.filter((n: any) => 
+            new Date(n.createdAt) > lastCheck && 
+            (n.priority === 'CRITICAL' || n.type === 'EMERGENCY')
+          )
+          
+          if (newAlerts.length > 0) {
+            setToasts(prev => [...newAlerts, ...prev].slice(0, 3))
+            setLastCheck(new Date())
+            
+            // Auto-remove after 8 seconds
+            newAlerts.forEach((alert: any) => {
+              setTimeout(() => removeToast(alert.id), 8000)
+            })
+          }
+        }
+      } catch (err) {
+        console.error('Toast sync error:', err)
+      }
+    }
+
+    const interval = setInterval(checkNewNotifications, 10000) // Check every 10s
+    return () => clearInterval(interval)
+  }, [lastCheck, removeToast])
+
+  return (
+    <div className="fixed top-20 left-6 z-[100] flex flex-col gap-3 w-80 pointer-events-none">
+      {toasts.map((toast) => (
+        <div 
+          key={toast.id}
+          className="pointer-events-auto bg-white/95 backdrop-blur-md border-l-4 border-red-600 rounded-2xl shadow-2xl shadow-red-900/10 p-4 animate-in slide-in-from-left duration-500 flex gap-3 group relative overflow-hidden"
+        >
+          {/* Progress bar */}
+          <div className="absolute bottom-0 left-0 h-1 bg-red-600/20 w-full">
+            <div className="h-full bg-red-600 animate-out slide-out-to-left duration-[8000ms] ease-linear" />
+          </div>
+
+          <div className="shrink-0 w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+            <Activity className="w-5 h-5 text-red-600" />
+          </div>
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] font-black text-red-600 uppercase tracking-widest">
+                CRITICAL EMERGENCY
+              </span>
+              <button 
+                onClick={() => removeToast(toast.id)}
+                className="text-gray-300 hover:text-gray-900 transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <h4 className="text-xs font-black text-gray-900 truncate mb-1">{toast.title}</h4>
+            <p className="text-[10px] text-gray-500 line-clamp-2 leading-relaxed mb-2">{toast.message}</p>
+            
+            <Link 
+              href={`/admin/notifications?id=${toast.id}`}
+              onClick={() => removeToast(toast.id)}
+              className="text-[9px] font-black text-blue-600 uppercase tracking-widest flex items-center gap-1 hover:underline"
+            >
+              Dispatch Now <ExternalLink className="w-2 h-2" />
+            </Link>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}

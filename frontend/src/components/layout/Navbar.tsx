@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { Menu, X, Phone, User, LogOut } from 'lucide-react'
+import NotificationBell from '../notifications/NotificationBell'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -101,6 +102,7 @@ const Navbar = () => {
                 >
                   Dashboard
                 </Link>
+                <NotificationBell />
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                     <User className="w-4 h-4 text-gray-600" />

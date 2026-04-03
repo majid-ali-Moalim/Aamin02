@@ -111,9 +111,31 @@ export default function EmergencyRequestsPage() {
     fetchInitialData()
     const interval = setInterval(() => {
       emergencyRequestsService.getAll().then(setRequests).catch(console.error)
-    }, 30000)
+    }, 10000) // 10s for "Live" feel
     return () => clearInterval(interval)
   }, [])
+
+  // Auto-refresh available units while Assign Modal is open
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isAssignModalOpen && selectedRequest) {
+      interval = setInterval(async () => {
+        try {
+          const [ambulances, drivers] = await Promise.all([
+            emergencyRequestsService.getAvailableAmbulances(),
+            emergencyRequestsService.getAvailableDrivers()
+          ])
+          setAvailableAmbulances(ambulances)
+          setAvailableDrivers(drivers)
+        } catch (err) {
+          console.error('Failed to refresh available units:', err)
+        }
+      }, 5000); // 5s refresh for active assignment
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    }
+  }, [isAssignModalOpen, selectedRequest]);
 
   // Form State
   const [formData, setFormData] = useState({

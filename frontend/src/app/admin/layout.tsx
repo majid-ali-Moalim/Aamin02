@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext'
 import { Role } from '@/types'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminTopBar from '@/components/layout/AdminTopBar'
+import LiveToastContainer from '@/components/notifications/LiveToastContainer'
 
 export default function AdminLayout({
   children,
@@ -42,6 +43,7 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <LiveToastContainer />
       <AdminSidebar />
       <div className="ml-64">
         <AdminTopBar />

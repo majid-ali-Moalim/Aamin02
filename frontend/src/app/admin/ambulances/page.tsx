@@ -29,6 +29,9 @@ export default function AmbulancesPage() {
   
   // Add Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
+  const [selectedAmbulanceToAssign, setSelectedAmbulanceToAssign] = useState<Ambulance | null>(null)
+  const [availableDrivers, setAvailableDrivers] = useState<Employee[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [newAmbulance, setNewAmbulance] = useState({
     ambulanceNumber: '',
@@ -85,7 +88,7 @@ export default function AmbulancesPage() {
   const fetchDrivers = async () => {
     try {
       const roles = await systemSetupService.getRoles()
-      const driverRole = roles.find(r => r.name.toUpperCase().includes('DRIVER'))
+      const driverRole = roles.find((r: EmployeeRole) => r.name.toUpperCase().includes('DRIVER'))
       if (driverRole) {
         const data = await employeesService.getAll(driverRole.id)
         setDrivers(data)
@@ -96,10 +99,18 @@ export default function AmbulancesPage() {
   }
 
   useEffect(() => {
+    fetchInitialDataGlobal()
+    const interval = setInterval(() => {
+      ambulancesService.getAll().then(setAmbulances).catch(console.error)
+    }, 10000) // 10s for "Live" feel
+    return () => clearInterval(interval)
+  }, [])
+
+  const fetchInitialDataGlobal = () => {
     fetchAmbulances()
     fetchMasterData()
     fetchDrivers()
-  }, [])
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -209,6 +220,29 @@ export default function AmbulancesPage() {
       alert('Failed to update status')
     }
   }
+
+  const openAssignModal = (ambulance: Ambulance) => {
+    setSelectedAmbulanceToAssign(ambulance);
+    // Filter drivers that don't have assignedAmbulanceId
+    const unassignedDrivers = drivers.filter(d => !d.assignedAmbulanceId);
+    setAvailableDrivers(unassignedDrivers);
+    setIsAssignModalOpen(true);
+  };
+
+  const handleAssignDriver = async (driverId: string) => {
+    if (!selectedAmbulanceToAssign) return;
+    try {
+      setIsSubmitting(true);
+      await ambulancesService.assignDriver(selectedAmbulanceToAssign.id, driverId);
+      setIsAssignModalOpen(false);
+      fetchAmbulances(); // Refresh list
+    } catch (err: any) {
+      console.error('Error assigning driver:', err);
+      alert('Failed to assign driver');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleDeleteAmbulance = async (id: string) => {
     if (confirm('Are you sure you want to delete this ambulance?')) {
@@ -428,6 +462,18 @@ export default function AmbulancesPage() {
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
+                          {ambulance.employees?.length === 0 && (
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110"
+                              onClick={() => openAssignModal(ambulance)}
+                              title="Assign Driver"
+                            >
+                              <User className="w-4 h-4 mr-1" />
+                              <Plus className="w-2 h-2" />
+                            </Button>
+                          )}
                           <select 
                             onChange={(e) => handleUpdateStatus(ambulance.id, e.target.value)}
                             className="text-xs border border-gray-300 rounded px-1 py-1"
@@ -465,6 +511,66 @@ export default function AmbulancesPage() {
       )}
 
       {/* Add Ambulance Modal - High Fidelity Redesign */}
+      {/* ... (existing add modal) ... */}
+
+      {/* Assign Driver Modal */}
+      {isAssignModalOpen && selectedAmbulanceToAssign && (
+        <div className="fixed inset-0 bg-[#0F172A]/80 backdrop-blur-md flex justify-center items-center z-[110] transition-all duration-500 p-4">
+          <div className="bg-white w-full max-w-md rounded-[2rem] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.5)] overflow-hidden animate-in zoom-in-95 duration-500 flex flex-col border border-white/20">
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-black text-[#1E293B] tracking-tight uppercase">Link Driver</h2>
+                  <p className="text-xs font-bold text-gray-400 mt-1">Vehicle: {selectedAmbulanceToAssign.ambulanceNumber}</p>
+                </div>
+                <button onClick={() => setIsAssignModalOpen(false)} className="text-gray-400 hover:text-red-500 transition-colors">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <p className="text-xs font-black text-gray-400 uppercase tracking-widest px-1">Available Drivers</p>
+                <div className="max-h-[300px] overflow-y-auto custom-scrollbar space-y-2 pr-2">
+                  {availableDrivers.length === 0 ? (
+                    <div className="text-center py-8 text-gray-400 font-bold border-2 border-dashed border-gray-100 rounded-2xl">
+                      No unassigned drivers found
+                    </div>
+                  ) : (
+                    availableDrivers.map(driver => (
+                      <button
+                        key={driver.id}
+                        onClick={() => handleAssignDriver(driver.id)}
+                        disabled={isSubmitting}
+                        className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-2xl transition-all group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="bg-white p-2 rounded-xl text-blue-600 shadow-sm">
+                            <User className="w-5 h-5" />
+                          </div>
+                          <div className="text-left">
+                            <p className="text-sm font-black text-secondary uppercase tracking-tight">{driver.firstName} {driver.lastName}</p>
+                            <p className="text-[10px] font-bold text-gray-400">ID: {driver.id.substring(0, 8)}</p>
+                          </div>
+                        </div>
+                        <Plus className="w-5 h-5 text-gray-300 group-hover:text-blue-500 transition-colors" />
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <Button 
+                  onClick={() => setIsAssignModalOpen(false)}
+                  className="w-full py-4 text-[10px] font-black uppercase tracking-widest bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-2xl"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-secondary/80 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-[1.5rem] max-w-lg w-full shadow-[0_20px_50px_rgba(29,53,87,0.3)] overflow-hidden my-auto border-2 border-white">

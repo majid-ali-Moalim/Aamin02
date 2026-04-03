@@ -130,7 +130,36 @@ export interface Employee {
   lastName?: string | null;
   phone?: string | null;
   status: string;
+
+  employeeCode?: string | null;
+  shiftStatus?: string | null;
+
+  licenseNumber?: string | null;
+  licenseType?: string | null;
+  licenseClass?: string | null;
+  licenseIssueDate?: string | null;
+  licenseExpiryDate?: string | null;
+  licenseStatus?: string | null;
   
+  medicalFitness?: string | null;
+  medicalCertificate?: string | null;
+  medicalExpiry?: string | null;
+
+  gender?: Gender | null;
+  dateOfBirth?: string | null;
+  nationalId?: string | null;
+  profilePhoto?: string | null;
+
+  emergencyContactName?: string | null;
+  emergencyPhone?: string | null;
+  relationship?: string | null;
+  address?: string | null;
+
+  employmentDate?: string | null;
+  typicalStartTime?: string | null;
+  typicalEndTime?: string | null;
+  defaultShift?: string | null;
+
   employeeRoleId?: string | null;
   departmentId?: string | null;
   stationId?: string | null;
@@ -141,6 +170,8 @@ export interface Employee {
   department?: Department | null;
   station?: Station | null;
   assignedAmbulance?: Ambulance | null;
+  shiftRecords?: ShiftRecord[];
+  attendanceRecords?: AttendanceRecord[];
 
   createdAt: string;
   updatedAt: string;
@@ -288,4 +319,27 @@ export interface EmergencyRequest {
   district?: District | null;
   statusLogs?: EmergencyStatusLog[];
   referrals?: any[]; 
+}
+
+export interface ShiftRecord {
+  id: string;
+  employeeId: string;
+  status: string;
+  startTime: string;
+  endTime?: string | null;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AttendanceRecord {
+  id: string;
+  employeeId: string;
+  date: string;
+  checkIn: string;
+  checkOut?: string | null;
+  status: string;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }

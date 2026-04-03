@@ -1,9 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class PatientsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notifications: NotificationsService
+  ) {}
 
   private async generatePatientCode(): Promise<string> {
     const count = await this.prisma.patient.count();
@@ -69,18 +73,37 @@ export class PatientsService {
       },
     });
 
-    const patient = await this.prisma.patient.create({
-      data: {
-        ...patientData,
-        patientCode,
-        userId: user.id,
-        region: regionId ? { connect: { id: regionId } } : undefined,
-        district: districtId ? { connect: { id: districtId } } : undefined,
-      },
-      include: this.includeWithStats,
-    });
+    try {
+      const patient = await this.prisma.patient.create({
+        data: {
+          ...patientData,
+          patientCode,
+          userId: user.id,
+          region: regionId ? { connect: { id: regionId } } : undefined,
+          district: districtId ? { connect: { id: districtId } } : undefined,
+        },
+        include: this.includeWithStats,
+      });
 
-    return this.toResponseDto(patient);
+      await this.notifications.create({
+        title: 'New Patient Registered',
+        message: `New patient ${patient.fullName} (${patient.patientCode}) has been registered.`,
+        type: 'PATIENT_CARE',
+        priority: 'LOW',
+        relatedModule: 'Patient',
+        relatedId: patient.id,
+        actionUrl: `/admin/patients?id=${patient.id}`,
+      });
+
+      return this.toResponseDto(patient);
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        const target = error.meta?.target?.[0] || 'field';
+        const friendlyName = target.replace(/([A-Z])/g, ' $1').toLowerCase();
+        throw new ConflictException(`A patient with this ${friendlyName} already exists.`);
+      }
+      throw error;
+    }
   }
 
   async findAll() {

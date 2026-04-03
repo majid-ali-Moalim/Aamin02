@@ -64,6 +64,7 @@ export class ReportsService {
         type: 'emergency',
         description: `New emergency request for ${e.patient.fullName}`,
         time: this.formatTimeAgo(e.createdAt),
+        rawDate: e.createdAt,
         status: e.status === 'PENDING' ? 'warning' : 'success'
       });
     });
@@ -74,6 +75,7 @@ export class ReportsService {
         type: 'referral',
         description: `Referral to ${r.hospitalName} for ${r.emergencyRequest.patient.fullName}`,
         time: this.formatTimeAgo(r.createdAt),
+        rawDate: r.createdAt,
         status: 'success'
       });
     });
@@ -84,16 +86,13 @@ export class ReportsService {
         type: 'user',
         description: `New ${emp.employeeRole?.name || 'employee'} registered: ${emp.firstName || emp.user.username}`,
         time: this.formatTimeAgo(emp.createdAt),
+        rawDate: emp.createdAt,
         status: 'success'
       });
     });
 
     // Sort activity by creation time
-    activity.sort((a, b) => {
-        const timeA = new Date(a.time).getTime() || 0;
-        const timeB = new Date(b.time).getTime() || 0;
-        return timeB - timeA;
-    });
+    activity.sort((a, b) => b.rawDate.getTime() - a.rawDate.getTime());
 
     return {
       stats: {

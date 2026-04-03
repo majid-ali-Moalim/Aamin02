@@ -65,6 +65,13 @@ export class EmergencyRequestsController {
   getAvailableDrivers() {
     return this.emergencyRequestsService.getAvailableDrivers();
   }
+ 
+  @Get('available/nurses')
+  @Roles('ADMIN', 'DISPATCHER')
+  @ApiOperation({ summary: 'Get available nurses' })
+  getAvailableNurses() {
+    return this.emergencyRequestsService.getAvailableNurses();
+  }
 
   @Get(':id')
   @Roles('ADMIN', 'DISPATCHER', 'DRIVER', 'NURSE')
@@ -81,7 +88,7 @@ export class EmergencyRequestsController {
   }
 
   @Patch(':id/status')
-  @Roles('ADMIN', 'DISPATCHER', 'DRIVER')
+  @Roles('ADMIN', 'DISPATCHER', 'DRIVER', 'NURSE')
   @ApiOperation({ summary: 'Update emergency request status' })
   updateStatus(
     @Param('id') id: string, 

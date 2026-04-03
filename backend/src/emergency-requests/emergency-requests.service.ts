@@ -4,10 +4,14 @@ import {
   Prisma,
 } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class EmergencyRequestsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notifications: NotificationsService
+  ) {}
 
   async create(data: any) {
     try {
@@ -112,9 +116,22 @@ export class EmergencyRequestsService {
 
       console.log('DIAGNOSTIC - Sending to Prisma:', JSON.stringify(finalPayload, null, 2));
 
-      return await this.prisma.emergencyRequest.create({
-        data: finalPayload
+      const request = await this.prisma.emergencyRequest.create({
+        data: finalPayload,
+        include: { patient: true }
       });
+
+      await this.notifications.create({
+        title: 'New Emergency Request',
+        message: `Request ${request.trackingCode} created for patient ${request.patient.fullName} at ${request.pickupLocation}`,
+        type: 'EMERGENCY',
+        priority: request.priority as any,
+        relatedModule: 'EmergencyRequest',
+        relatedId: request.id,
+        actionUrl: `/admin/emergency-requests?id=${request.id}`
+      });
+
+      return request;
     } catch (error: any) {
       console.error('STRICT DISPATCH ERROR:', error);
       let detail = error.message;
@@ -173,10 +190,12 @@ export class EmergencyRequestsService {
           },
         },
         ambulance: true,
+        nurse: {
+          include: {
+            user: true,
+          },
+        },
         referrals: true,
-        statusLogs: {
-          orderBy: { createdAt: 'desc' }
-        }
       },
     });
   }
@@ -225,6 +244,7 @@ export class EmergencyRequestsService {
     data: {
       dispatcherId?: string;
       driverId?: string;
+      nurseId?: string;
       ambulanceId?: string;
       status?: EmergencyRequestStatus;
     },
@@ -234,10 +254,11 @@ export class EmergencyRequestsService {
 
     const updateData: any = { ...data, assignedAt: new Date() };
 
-    return this.prisma.emergencyRequest.update({
+    const result = await this.prisma.emergencyRequest.update({
       where: { id },
       data: {
         ...updateData,
+        nurse: data.nurseId ? { connect: { id: data.nurseId } } : undefined,
         statusLogs: data.status ? {
           create: {
             fromStatus: existing.status,
@@ -249,11 +270,50 @@ export class EmergencyRequestsService {
       include: {
         patient: true,
         dispatcher: true,
-        driver: true,
+        driver: { include: { user: true } },
+        nurse: { include: { user: true } },
         ambulance: true,
         statusLogs: true
       },
     });
+
+    await this.notifications.create({
+      title: 'Emergency Team Assigned',
+      message: `Ambulance ${result.ambulance?.ambulanceNumber} and team assigned to ${result.trackingCode}`,
+      type: 'EMERGENCY',
+      priority: result.priority as any,
+      relatedModule: 'EmergencyRequest',
+      relatedId: result.id,
+      actionUrl: `/admin/emergency-requests?id=${result.id}`,
+    });
+
+    if (result.driver?.userId) {
+      await this.notifications.create({
+        title: 'New Emergency Assignment',
+        message: `You have been assigned as Driver to request ${result.trackingCode}. Please prepare for dispatch.`,
+        type: 'EMERGENCY',
+        priority: result.priority as any,
+        userId: result.driver.userId,
+        relatedModule: 'EmergencyRequest',
+        relatedId: result.id,
+      });
+    }
+
+    if (result.nurse?.userId) {
+      await this.notifications.create({
+        title: 'New Emergency Assignment',
+        message: `You have been assigned as Nurse to request ${result.trackingCode}. Please prepare for clinical support.`,
+        type: 'EMERGENCY',
+        priority: result.priority as any,
+        userId: result.nurse.userId,
+        relatedModule: 'EmergencyRequest',
+        relatedId: result.id,
+      });
+    }
+
+    return result;
+
+    return result;
   }
 
   async updateStatus(id: string, status: EmergencyRequestStatus, employeeId?: string) {
@@ -268,7 +328,7 @@ export class EmergencyRequestsService {
     else if (status === 'COMPLETED') updateData.completedAt = new Date();
     else if (status === 'CANCELLED') updateData.cancelledAt = new Date();
 
-    return this.prisma.emergencyRequest.update({
+    const updated = await this.prisma.emergencyRequest.update({
       where: { id },
       data: {
         ...updateData,
@@ -282,9 +342,34 @@ export class EmergencyRequestsService {
         }
       },
       include: {
-        statusLogs: true
+        statusLogs: true,
+        patient: true,
       }
     });
+
+    await this.notifications.create({
+      title: 'Emergency Status Update',
+      message: `Request ${existing.trackingCode} status changed to ${status}`,
+      type: 'EMERGENCY',
+      priority: existing.priority as any,
+      relatedModule: 'EmergencyRequest',
+      relatedId: existing.id,
+      actionUrl: `/admin/emergency-requests?id=${existing.id}`
+    });
+
+    if (status === 'COMPLETED') {
+      await this.notifications.broadcast({
+        title: 'Emergency Completed',
+        message: `Emergency response ${existing.trackingCode} is successfully completed.`,
+        type: 'EMERGENCY',
+        priority: 'MEDIUM',
+        targetRole: 'ADMIN',
+        relatedModule: 'EmergencyRequest',
+        relatedId: existing.id,
+      });
+    }
+
+    return updated;
   }
 
   update(id: string, data: Prisma.EmergencyRequestUpdateInput) {
@@ -341,6 +426,31 @@ export class EmergencyRequestsService {
     });
   }
 
+  async getAvailableNurses() {
+    const nurseRole = await this.prisma.employeeRole.findFirst({
+      where: { name: { contains: 'Nurse', mode: 'insensitive' } }
+    });
+    
+    if (!nurseRole) return [];
+
+    return this.prisma.employee.findMany({
+      where: {
+        employeeRoleId: nurseRole.id,
+        status: 'ACTIVE',
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+        employeeRole: true,
+        assignedAmbulance: true,
+      },
+    });
+  }
   async getDashboardStats() {
     const total = await this.prisma.emergencyRequest.count();
     const pending = await this.prisma.emergencyRequest.count({

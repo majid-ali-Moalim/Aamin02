@@ -37,9 +37,17 @@ export default function EmployeesPage() {
   })
 
   useEffect(() => {
+    fetchInitialData()
+    const interval = setInterval(() => {
+      employeesService.getAll().then(setEmployees).catch(console.error)
+    }, 10000) // 10s for "Live" feel
+    return () => clearInterval(interval)
+  }, [])
+
+  const fetchInitialData = () => {
     fetchEmployees()
     fetchMasterData()
-  }, [])
+  }
 
   const fetchMasterData = async () => {
     try {

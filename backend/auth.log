@@ -302,3 +302,389 @@
 [2026-03-31T18:16:15.391Z] [AuthService] Invalid password for: aamin@admin
 [2026-03-31T18:16:24.151Z] [AuthService] Validating user: "aamin@admin"
 [2026-03-31T18:16:24.152Z] [AuthService] Hardcoded admin login successful
+[2026-04-01T14:58:32.209Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T14:58:32.294Z] [AuthService] Password match: false
+[2026-04-01T14:58:32.294Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T14:58:32.301Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T14:58:32.382Z] [AuthService] Password match: false
+[2026-04-01T14:58:32.386Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:09:08.699Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:09:08.860Z] [AuthService] Password match: false
+[2026-04-01T17:09:08.862Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:09:08.873Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:09:09.029Z] [AuthService] Password match: false
+[2026-04-01T17:09:09.031Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:09:09.039Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:09:09.133Z] [AuthService] Password match: false
+[2026-04-01T17:09:09.135Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:09:09.141Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:09:09.285Z] [AuthService] Password match: false
+[2026-04-01T17:09:09.287Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:34:04.186Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:34:04.331Z] [AuthService] Password match: false
+[2026-04-01T17:34:04.332Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:34:04.337Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:34:04.425Z] [AuthService] Password match: false
+[2026-04-01T17:34:04.426Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:37:55.242Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:37:55.369Z] [AuthService] Password match: false
+[2026-04-01T17:37:55.371Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:37:55.379Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:37:55.464Z] [AuthService] Password match: false
+[2026-04-01T17:37:55.465Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:44:41.391Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:44:41.620Z] [AuthService] Password match: false
+[2026-04-01T17:44:41.621Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:44:41.629Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:44:41.790Z] [AuthService] Password match: false
+[2026-04-01T17:44:41.792Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:44:51.102Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:44:51.178Z] [AuthService] Password match: false
+[2026-04-01T17:44:51.179Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:44:51.183Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:44:51.335Z] [AuthService] Password match: false
+[2026-04-01T17:44:51.336Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:46:19.693Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:46:19.861Z] [AuthService] Password match: false
+[2026-04-01T17:46:19.862Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:46:19.870Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:46:19.961Z] [AuthService] Password match: false
+[2026-04-01T17:46:19.962Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:46:20.891Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:46:20.973Z] [AuthService] Password match: false
+[2026-04-01T17:46:20.974Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:46:20.979Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:46:21.054Z] [AuthService] Password match: false
+[2026-04-01T17:46:21.055Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:46:45.116Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:46:45.293Z] [AuthService] Password match: false
+[2026-04-01T17:46:45.294Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T17:46:45.303Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T17:46:45.652Z] [AuthService] Password match: false
+[2026-04-01T17:46:45.655Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T18:34:22.114Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T18:34:22.116Z] [AuthService] Hardcoded admin login successful
+[2026-04-01T18:43:48.957Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T18:43:49.033Z] [AuthService] Password match: false
+[2026-04-01T18:43:49.033Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T18:43:49.040Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T18:43:49.107Z] [AuthService] Password match: false
+[2026-04-01T18:43:49.108Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T18:58:47.844Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T18:58:47.916Z] [AuthService] Password match: false
+[2026-04-01T18:58:47.917Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T18:58:47.922Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T18:58:47.987Z] [AuthService] Password match: false
+[2026-04-01T18:58:47.988Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T19:37:24.024Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T19:37:24.167Z] [AuthService] Password match: false
+[2026-04-01T19:37:24.168Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T19:37:24.173Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T19:37:24.252Z] [AuthService] Password match: false
+[2026-04-01T19:37:24.253Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T19:51:33.832Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T19:51:33.914Z] [AuthService] Password match: false
+[2026-04-01T19:51:33.915Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T19:51:33.921Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T19:51:34.004Z] [AuthService] Password match: false
+[2026-04-01T19:51:34.005Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T19:51:36.009Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T19:51:36.085Z] [AuthService] Password match: false
+[2026-04-01T19:51:36.086Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T19:51:36.090Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T19:51:36.197Z] [AuthService] Password match: false
+[2026-04-01T19:51:36.198Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T19:52:17.963Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T19:52:18.028Z] [AuthService] Password match: false
+[2026-04-01T19:52:18.029Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T19:52:18.033Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T19:52:18.113Z] [AuthService] Password match: false
+[2026-04-01T19:52:18.114Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-01T21:15:22.412Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T21:15:22.430Z] [AuthService] Hardcoded admin login successful
+[2026-04-01T21:15:24.089Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-01T21:15:24.092Z] [AuthService] Hardcoded admin login successful
+[2026-04-02T06:54:08.497Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T06:54:08.646Z] [AuthService] Password match: false
+[2026-04-02T06:54:08.648Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T06:54:08.658Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T06:54:08.784Z] [AuthService] Password match: false
+[2026-04-02T06:54:08.786Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T07:01:46.860Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T07:01:47.098Z] [AuthService] Password match: false
+[2026-04-02T07:01:47.100Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T07:01:47.108Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T07:01:47.234Z] [AuthService] Password match: false
+[2026-04-02T07:01:47.235Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T07:03:31.511Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T07:03:31.587Z] [AuthService] Password match: false
+[2026-04-02T07:03:31.587Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T07:03:31.592Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T07:03:31.675Z] [AuthService] Password match: false
+[2026-04-02T07:03:31.680Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T07:17:48.523Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T07:17:48.600Z] [AuthService] Password match: false
+[2026-04-02T07:17:48.601Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T07:17:48.607Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T07:17:48.689Z] [AuthService] Password match: false
+[2026-04-02T07:17:48.690Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T17:33:15.368Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T17:33:16.897Z] [AuthService] Password match: false
+[2026-04-02T17:33:16.901Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T17:33:16.931Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T17:33:17.089Z] [AuthService] Password match: false
+[2026-04-02T17:33:17.090Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T17:33:28.785Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T17:33:28.786Z] [AuthService] Hardcoded admin login successful
+[2026-04-02T18:05:06.545Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:05:06.713Z] [AuthService] Password match: false
+[2026-04-02T18:05:06.714Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:05:06.723Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:05:06.884Z] [AuthService] Password match: false
+[2026-04-02T18:05:06.886Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:05:09.171Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:05:09.326Z] [AuthService] Password match: false
+[2026-04-02T18:05:09.328Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:05:09.336Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:05:09.466Z] [AuthService] Password match: false
+[2026-04-02T18:05:09.467Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:17:53.225Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:17:54.714Z] [AuthService] Password match: false
+[2026-04-02T18:17:54.716Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:17:54.734Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:17:54.969Z] [AuthService] Password match: false
+[2026-04-02T18:17:54.982Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:18:05.355Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:18:05.468Z] [AuthService] Password match: false
+[2026-04-02T18:18:05.469Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:18:05.473Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:18:05.611Z] [AuthService] Password match: false
+[2026-04-02T18:18:05.612Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:18:07.325Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:18:07.447Z] [AuthService] Password match: false
+[2026-04-02T18:18:07.451Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:18:07.460Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:18:07.568Z] [AuthService] Password match: false
+[2026-04-02T18:18:07.570Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:32:43.532Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:32:43.615Z] [AuthService] Password match: false
+[2026-04-02T18:32:43.617Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:32:43.623Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:32:43.687Z] [AuthService] Password match: false
+[2026-04-02T18:32:43.689Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:32:49.421Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:32:49.503Z] [AuthService] Password match: false
+[2026-04-02T18:32:49.504Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:32:49.511Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:32:49.582Z] [AuthService] Password match: false
+[2026-04-02T18:32:49.582Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:35:24.196Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:35:24.388Z] [AuthService] Password match: false
+[2026-04-02T18:35:24.389Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:35:24.394Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:35:24.479Z] [AuthService] Password match: false
+[2026-04-02T18:35:24.480Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:37:55.262Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:37:55.348Z] [AuthService] Password match: false
+[2026-04-02T18:37:55.349Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:37:55.354Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:37:55.438Z] [AuthService] Password match: false
+[2026-04-02T18:37:55.439Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:38:50.445Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:38:50.446Z] [AuthService] Hardcoded admin login successful
+[2026-04-02T18:41:13.550Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:41:13.618Z] [AuthService] Password match: false
+[2026-04-02T18:41:13.618Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:41:13.624Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:41:13.690Z] [AuthService] Password match: false
+[2026-04-02T18:41:13.691Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-02T18:42:33.926Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-02T18:42:33.927Z] [AuthService] Hardcoded admin login successful
+[2026-04-03T14:31:38.910Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T14:31:39.320Z] [AuthService] Password match: false
+[2026-04-03T14:31:39.323Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T14:31:39.339Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T14:31:39.427Z] [AuthService] Password match: false
+[2026-04-03T14:31:39.428Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T14:31:39.435Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T14:31:39.529Z] [AuthService] Password match: false
+[2026-04-03T14:31:39.531Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T14:31:39.538Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T14:31:39.649Z] [AuthService] Password match: false
+[2026-04-03T14:31:39.650Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T14:31:43.082Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T14:31:43.083Z] [AuthService] Hardcoded admin login successful
+[2026-04-03T15:06:46.309Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T15:06:46.642Z] [AuthService] Password match: false
+[2026-04-03T15:06:46.643Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T15:06:46.650Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T15:06:46.725Z] [AuthService] Password match: false
+[2026-04-03T15:06:46.727Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T15:06:46.739Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T15:06:46.841Z] [AuthService] Password match: false
+[2026-04-03T15:06:46.842Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T15:06:46.851Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T15:06:47.022Z] [AuthService] Password match: false
+[2026-04-03T15:06:47.026Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T15:07:39.730Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T15:07:39.790Z] [AuthService] Password match: false
+[2026-04-03T15:07:39.791Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T15:07:39.795Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T15:07:39.861Z] [AuthService] Password match: false
+[2026-04-03T15:07:39.863Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T15:07:39.870Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T15:07:39.936Z] [AuthService] Password match: false
+[2026-04-03T15:07:39.938Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T15:07:39.942Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T15:07:40.006Z] [AuthService] Password match: false
+[2026-04-03T15:07:40.007Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T15:44:44.646Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T15:44:44.764Z] [AuthService] Password match: false
+[2026-04-03T15:44:44.765Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T15:44:44.768Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T15:44:44.839Z] [AuthService] Password match: false
+[2026-04-03T15:44:44.841Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T17:02:52.382Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:02:52.439Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:02:57.430Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:02:57.432Z] [AuthService] Hardcoded admin login successful
+[2026-04-03T17:03:19.721Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:03:19.736Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:03:21.108Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:03:21.109Z] [AuthService] Hardcoded admin login successful
+[2026-04-03T17:03:25.776Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:03:25.787Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:03:31.802Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:03:31.803Z] [AuthService] Hardcoded admin login successful
+[2026-04-03T17:04:41.861Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:04:41.872Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:04:43.279Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:04:43.281Z] [AuthService] Hardcoded admin login successful
+[2026-04-03T17:41:46.533Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:41:46.723Z] [AuthService] Password match: false
+[2026-04-03T17:41:46.724Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T17:41:46.730Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:41:46.794Z] [AuthService] Password match: false
+[2026-04-03T17:41:46.795Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T17:45:24.581Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:45:24.655Z] [AuthService] Password match: false
+[2026-04-03T17:45:24.655Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T17:45:24.659Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:45:24.723Z] [AuthService] Password match: false
+[2026-04-03T17:45:24.724Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T17:46:34.277Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:46:34.362Z] [AuthService] Password match: false
+[2026-04-03T17:46:34.363Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T17:46:34.369Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:46:34.456Z] [AuthService] Password match: false
+[2026-04-03T17:46:34.457Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T17:46:36.367Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:46:36.441Z] [AuthService] Password match: false
+[2026-04-03T17:46:36.442Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T17:46:36.447Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T17:46:36.521Z] [AuthService] Password match: false
+[2026-04-03T17:46:36.523Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:12:26.579Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:12:26.703Z] [AuthService] Password match: false
+[2026-04-03T18:12:26.704Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:12:26.718Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:12:26.829Z] [AuthService] Password match: false
+[2026-04-03T18:12:26.831Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:12:50.171Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:12:50.272Z] [AuthService] Password match: false
+[2026-04-03T18:12:50.273Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:12:50.285Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:12:50.386Z] [AuthService] Password match: false
+[2026-04-03T18:12:50.387Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:12:54.652Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:12:54.761Z] [AuthService] Password match: false
+[2026-04-03T18:12:54.762Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:12:54.768Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:12:54.884Z] [AuthService] Password match: false
+[2026-04-03T18:12:54.885Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:14:09.057Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:14:09.333Z] [AuthService] Password match: false
+[2026-04-03T18:14:09.333Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:14:09.338Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:14:09.440Z] [AuthService] Password match: false
+[2026-04-03T18:14:09.446Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:36:44.201Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:36:44.270Z] [AuthService] Password match: false
+[2026-04-03T18:36:44.271Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:36:44.275Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:36:44.342Z] [AuthService] Password match: false
+[2026-04-03T18:36:44.343Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:38:38.635Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:38:38.709Z] [AuthService] Password match: false
+[2026-04-03T18:38:38.711Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:38:38.716Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:38:38.782Z] [AuthService] Password match: false
+[2026-04-03T18:38:38.783Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:38:45.135Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:38:45.241Z] [AuthService] Password match: false
+[2026-04-03T18:38:45.243Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:38:45.249Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:38:45.329Z] [AuthService] Password match: false
+[2026-04-03T18:38:45.330Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:42:17.261Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:42:17.733Z] [AuthService] Password match: false
+[2026-04-03T18:42:17.735Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:42:17.740Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:42:17.826Z] [AuthService] Password match: false
+[2026-04-03T18:42:17.828Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:45:42.807Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:45:42.884Z] [AuthService] Password match: false
+[2026-04-03T18:45:42.888Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:45:42.894Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:45:42.978Z] [AuthService] Password match: false
+[2026-04-03T18:45:42.979Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:45:59.595Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:45:59.656Z] [AuthService] Password match: false
+[2026-04-03T18:45:59.657Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:45:59.661Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:45:59.732Z] [AuthService] Password match: false
+[2026-04-03T18:45:59.733Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:57:41.708Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:57:41.802Z] [AuthService] Password match: false
+[2026-04-03T18:57:41.806Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T18:57:41.811Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T18:57:41.886Z] [AuthService] Password match: false
+[2026-04-03T18:57:41.888Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:10:55.012Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:10:55.086Z] [AuthService] Password match: false
+[2026-04-03T19:10:55.086Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:10:55.089Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:10:55.152Z] [AuthService] Password match: false
+[2026-04-03T19:10:55.153Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:11:03.458Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:11:03.552Z] [AuthService] Password match: false
+[2026-04-03T19:11:03.553Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:11:03.561Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:11:03.657Z] [AuthService] Password match: false
+[2026-04-03T19:11:03.662Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:11:21.705Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:11:21.809Z] [AuthService] Password match: false
+[2026-04-03T19:11:21.810Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:11:21.824Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:11:21.944Z] [AuthService] Password match: false
+[2026-04-03T19:11:21.948Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:19:12.817Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:19:12.889Z] [AuthService] Password match: false
+[2026-04-03T19:19:12.890Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:19:12.896Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:19:12.970Z] [AuthService] Password match: false
+[2026-04-03T19:19:12.972Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:28:39.719Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:28:39.782Z] [AuthService] Password match: false
+[2026-04-03T19:28:39.783Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:28:39.786Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:28:39.852Z] [AuthService] Password match: false
+[2026-04-03T19:28:39.853Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:55:28.379Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:55:28.455Z] [AuthService] Password match: false
+[2026-04-03T19:55:28.456Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:55:28.460Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:55:28.525Z] [AuthService] Password match: false
+[2026-04-03T19:55:28.526Z] [AuthService] Invalid password for: aamin@admin
+[2026-04-03T19:55:45.892Z] [AuthService] Validating user: "aamin@admin"
+[2026-04-03T19:55:45.893Z] [AuthService] Hardcoded admin login successful

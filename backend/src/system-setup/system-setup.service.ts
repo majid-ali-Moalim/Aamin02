@@ -26,7 +26,9 @@ export class SystemSetupService {
       return await this.getModel(modelName).create({ data });
     } catch (error: any) {
       if (error.code === 'P2002') {
-        throw new ConflictException(`A record with this unique identifier (like Name or Code) already exists, possibly in the archived list. Please use a different identifier.`);
+        const target = error.meta?.target?.[0] || 'identifier';
+        const friendlyName = target.replace(/([A-Z])/g, ' $1').toLowerCase();
+        throw new ConflictException(`A record with this ${friendlyName} already exists. Please use a different value.`);
       }
       throw error;
     }
@@ -40,7 +42,9 @@ export class SystemSetupService {
       });
     } catch (error: any) {
       if (error.code === 'P2002') {
-        throw new ConflictException(`A record with this unique identifier already exists.`);
+        const target = error.meta?.target?.[0] || 'identifier';
+        const friendlyName = target.replace(/([A-Z])/g, ' $1').toLowerCase();
+        throw new ConflictException(`A record with this ${friendlyName} already exists.`);
       }
       throw error;
     }

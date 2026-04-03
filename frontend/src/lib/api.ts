@@ -42,28 +42,39 @@ class ApiService {
   }
 
   // Generic request methods
-  async get<T = any>(url: string): Promise<T> {
-    const response: AxiosResponse<T> = await this.api.get(url)
+  async get<T = any>(url: string, config?: any): Promise<T> {
+    const response: AxiosResponse<T> = await this.api.get(url, config)
     return response.data
   }
 
-  async post<T = any>(url: string, data?: any): Promise<T> {
-    const response: AxiosResponse<T> = await this.api.post(url, data)
+  async post<T = any>(url: string, data?: any, config?: any): Promise<T> {
+    const response: AxiosResponse<T> = await this.api.post(url, data, config)
     return response.data
   }
 
-  async put<T = any>(url: string, data?: any): Promise<T> {
-    const response: AxiosResponse<T> = await this.api.put(url, data)
+  async put<T = any>(url: string, data?: any, config?: any): Promise<T> {
+    const response: AxiosResponse<T> = await this.api.put(url, data, config)
     return response.data
   }
 
-  async delete<T = any>(url: string): Promise<T> {
-    const response: AxiosResponse<T> = await this.api.delete(url)
+  async delete<T = any>(url: string, config?: any): Promise<T> {
+    const response: AxiosResponse<T> = await this.api.delete(url, config)
     return response.data
   }
 
-  async patch<T = any>(url: string, data?: any): Promise<T> {
-    const response: AxiosResponse<T> = await this.api.patch(url, data)
+  async patch<T = any>(url: string, data?: any, config?: any): Promise<T> {
+    const response: AxiosResponse<T> = await this.api.patch(url, data, config)
+    return response.data
+  }
+
+  async upload<T = any>(url: string, file: File): Promise<T> {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response: AxiosResponse<T> = await this.api.post(url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
     return response.data
   }
 }
@@ -252,9 +263,9 @@ export const emergencyRequestsService = {
     return await api.delete(`/api/emergency-requests/${id}`)
   },
 
-  assignAmbulance: async (id: string, ambulanceId: string, driverId: string) => {
+  assignAmbulance: async (id: string, ambulanceId: string, driverId: string, nurseId?: string) => {
     const api = new ApiService()
-    return await api.patch(`/api/emergency-requests/${id}/assign`, { ambulanceId, driverId })
+    return await api.patch(`/api/emergency-requests/${id}/assign`, { ambulanceId, driverId, nurseId })
   },
 
   updateStatus: async (id: string, status: string) => {
@@ -275,6 +286,11 @@ export const emergencyRequestsService = {
   getAvailableDrivers: async () => {
     const api = new ApiService()
     return await api.get('/api/emergency-requests/available/drivers')
+  },
+ 
+  getAvailableNurses: async () => {
+    const api = new ApiService()
+    return await api.get('/api/emergency-requests/available/nurses')
   }
 }
 
@@ -372,5 +388,160 @@ export const systemSetupService = {
   delete: async (model: string, id: string) => {
     const api = new ApiService()
     return await api.delete(`/api/setup/${model}/${id}`)
+  }
+}
+
+// Drivers service
+export const driversService = {
+  getAll: async (filters?: { stationId?: string; status?: string; shiftStatus?: string; searchTerm?: string }) => {
+    const api = new ApiService()
+    const params = new URLSearchParams()
+    if (filters?.stationId) params.append('stationId', filters.stationId)
+    if (filters?.status) params.append('status', filters.status)
+    if (filters?.shiftStatus) params.append('shiftStatus', filters.shiftStatus)
+    if (filters?.searchTerm) params.append('searchTerm', filters.searchTerm)
+    
+    return await api.get(`/api/drivers?${params.toString()}`)
+  },
+
+  getById: async (id: string) => {
+    const api = new ApiService()
+    return await api.get(`/api/drivers/${id}`)
+  },
+
+  getStats: async () => {
+    const api = new ApiService()
+    return await api.get('/api/drivers/stats')
+  },
+
+  getPerformance: async () => {
+    const api = new ApiService()
+    return await api.get('/api/drivers/performance')
+  },
+
+  getAttendance: async (startDate?: string, endDate?: string) => {
+    const api = new ApiService()
+    const params = new URLSearchParams()
+    if (startDate) params.append('startDate', startDate)
+    if (endDate) params.append('endDate', endDate)
+    return await api.get(`/api/drivers/attendance?${params.toString()}`)
+  },
+
+  updateShift: async (id: string, status: string, notes?: string) => {
+    const api = new ApiService()
+    return await api.post(`/api/drivers/${id}/shift`, { status, notes })
+  },
+
+  assignAmbulance: async (id: string, ambulanceId: string | null) => {
+    const api = new ApiService()
+    return await api.put(`/api/drivers/${id}/ambulance`, { ambulanceId })
+  }
+}
+
+// Nurses service
+export const nursesService = {
+  getAll: async (filters?: { stationId?: string; status?: string; shiftStatus?: string; searchTerm?: string }) => {
+    const api = new ApiService()
+    const params = new URLSearchParams()
+    if (filters?.stationId) params.append('stationId', filters.stationId)
+    if (filters?.status) params.append('status', filters.status)
+    if (filters?.shiftStatus) params.append('shiftStatus', filters.shiftStatus)
+    if (filters?.searchTerm) params.append('searchTerm', filters.searchTerm)
+    
+    return await api.get(`/api/nurses?${params.toString()}`)
+  },
+
+  getById: async (id: string) => {
+    const api = new ApiService()
+    return await api.get(`/api/nurses/${id}`)
+  },
+
+  getStats: async () => {
+    const api = new ApiService()
+    return await api.get('/api/nurses/stats')
+  },
+
+  getAssignments: async () => {
+    const api = new ApiService()
+    return await api.get('/api/nurses/assignments')
+  },
+
+  getPerformance: async (id: string) => {
+    const api = new ApiService()
+    return await api.get(`/api/nurses/${id}/performance`)
+  },
+
+  getPatientCareRecords: async (nurseId?: string) => {
+    const api = new ApiService()
+    const params = new URLSearchParams()
+    if (nurseId) params.append('nurseId', nurseId)
+    return await api.get(`/api/nurses/reports/patient-care?${params.toString()}`)
+  },
+
+  getIncidentReports: async (nurseId?: string) => {
+    const api = new ApiService()
+    const params = new URLSearchParams()
+    if (nurseId) params.append('nurseId', nurseId)
+    return await api.get(`/api/nurses/reports/incidents?${params.toString()}`)
+  },
+ 
+  createPatientCareRecord: async (data: any) => {
+    const api = new ApiService()
+    return await api.post('/api/nurses/records', data)
+  },
+ 
+  createIncidentReport: async (data: any) => {
+    const api = new ApiService()
+    return await api.post('/api/nurses/incidents', data)
+  },
+
+  updateShift: async (id: string, status: string, notes?: string) => {
+    const api = new ApiService()
+    return await api.post(`/api/nurses/${id}/shift`, { status, notes })
+  },
+
+  updateClearance: async (id: string, status: string) => {
+    const api = new ApiService()
+    return await api.patch(`/api/nurses/${id}/clearance`, { status })
+  }
+}
+
+// Notifications service
+export const notificationsService = {
+  getAll: async (filters?: any) => {
+    const api = new ApiService()
+    return await api.get('/api/notifications', { params: filters })
+  },
+  getStats: async () => {
+    const api = new ApiService()
+    return await api.get('/api/notifications/stats')
+  },
+  getRecent: async () => {
+    const api = new ApiService()
+    return await api.get('/api/notifications/recent')
+  },
+  markRead: async (id: string) => {
+    const api = new ApiService()
+    return await api.patch(`/api/notifications/${id}/read`)
+  },
+  markAllRead: async (userId?: string) => {
+    const api = new ApiService()
+    return await api.post('/api/notifications/mark-all-read', { userId })
+  },
+  resolve: async (id: string) => {
+    const api = new ApiService()
+    return await api.patch(`/api/notifications/${id}/resolve`)
+  },
+  remove: async (id: string) => {
+    const api = new ApiService()
+    return await api.delete(`/api/notifications/${id}`)
+  }
+}
+
+// Upload service
+export const uploadService = {
+  uploadFile: async (file: File) => {
+    const api = new ApiService()
+    return await api.upload('/api/uploads', file)
   }
 }
