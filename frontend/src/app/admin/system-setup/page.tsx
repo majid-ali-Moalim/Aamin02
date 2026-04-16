@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { 
   MapPin, 
@@ -17,7 +18,9 @@ import {
   History,
   CheckCircle2,
   AlertCircle,
-  Warehouse
+  Warehouse,
+  Settings,
+  ExternalLink
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -32,20 +35,33 @@ import {
   IncidentCategory,
   Station
 } from '@/types'
-import RegionForm from '@/components/features/system-setup/RegionForm'
-import DistrictForm from '@/components/features/system-setup/DistrictForm'
-import StationForm from '@/components/features/system-setup/StationForm'
-import DepartmentForm from '@/components/features/system-setup/DepartmentForm'
-import EmployeeRoleForm from '@/components/features/system-setup/EmployeeRoleForm'
-import EquipmentLevelForm from '@/components/features/system-setup/EquipmentLevelForm'
-import IncidentCategoryForm from '@/components/features/system-setup/IncidentCategoryForm'
+import HospitalForm from '@/components/features/system-setup/HospitalForm'
+import AreaForm from '@/components/features/system-setup/AreaForm'
 
-type SetupTab = 'regions' | 'districts' | 'departments' | 'roles' | 'equipment' | 'categories' | 'stations'
+type SetupTab = 'regions' | 'districts' | 'areas' | 'stations' | 'hospitals' | 'departments' | 'roles' | 'equipment' | 'categories'
 
 export default function SystemSetupPage() {
-  const [activeTab, setActiveTab] = useState<SetupTab>('regions')
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const initialTab = (searchParams.get('tab') as SetupTab) || 'regions'
+  
+  const [activeTab, setActiveTab] = useState<SetupTab>(initialTab)
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+
+  // Sync state if URL changes
+  useEffect(() => {
+    const tab = searchParams.get('tab') as SetupTab
+    if (tab && tab !== activeTab) {
+      setActiveTab(tab)
+    }
+  }, [searchParams])
+
+  // Sync URL if state changes internally
+  const handleTabChange = (tab: SetupTab) => {
+    setActiveTab(tab)
+    router.push(`/admin/system-setup?tab=${tab}`)
+  }
   
   // Data states
   const [regions, setRegions] = useState<Region[]>([])
@@ -55,6 +71,8 @@ export default function SystemSetupPage() {
   const [equipmentLevels, setEquipmentLevels] = useState<EquipmentLevel[]>([])
   const [categories, setCategories] = useState<IncidentCategory[]>([])
   const [stations, setStations] = useState<Station[]>([])
+  const [areas, setAreas] = useState<any[]>([])
+  const [hospitals, setHospitals] = useState<any[]>([])
 
   // Modal / Form states
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -93,6 +111,15 @@ export default function SystemSetupPage() {
           setDistricts(await systemSetupService.getDistricts())
           setStations(await systemSetupService.getStations())
           break
+        case 'areas':
+          setDistricts(await systemSetupService.getDistricts())
+          setAreas(await systemSetupService.getAreas())
+          break
+        case 'hospitals':
+          setRegions(await systemSetupService.getRegions())
+          setDistricts(await systemSetupService.getDistricts())
+          setHospitals(await systemSetupService.getHospitals())
+          break
       }
     } catch (error) {
       console.error('Failed to load data', error)
@@ -122,7 +149,9 @@ export default function SystemSetupPage() {
         roles: 'employeeRole',
         equipment: 'equipmentLevel',
         categories: 'incidentCategory',
-        stations: 'station'
+        stations: 'station',
+        areas: 'area',
+        hospitals: 'hospital'
       }
       
       const model = modelMap[activeTab]
@@ -166,7 +195,9 @@ export default function SystemSetupPage() {
   const tabs = [
     { id: 'regions', label: 'Regions', icon: MapPin },
     { id: 'districts', label: 'Districts', icon: Map },
+    { id: 'areas', label: 'Areas', icon: MapPin },
     { id: 'stations', label: 'Stations', icon: Warehouse },
+    { id: 'hospitals', label: 'Hospitals', icon: Building2 },
     { id: 'departments', label: 'Departments', icon: Building2 },
     { id: 'roles', label: 'Employee Roles', icon: UserCog },
     { id: 'equipment', label: 'Equipment Levels', icon: Stethoscope },
@@ -182,6 +213,8 @@ export default function SystemSetupPage() {
       case 'equipment': return equipmentLevels
       case 'categories': return categories
       case 'stations': return stations
+      case 'areas': return areas
+      case 'hospitals': return hospitals
       default: return []
     }
   }
@@ -203,39 +236,59 @@ export default function SystemSetupPage() {
           <p className="text-blue-100/70 text-lg max-w-2xl font-light">
             Manage your organization's master data, locations, and categorical configuration in one centralized dashboard.
           </p>
+          <div className="flex flex-wrap items-center gap-3 mt-6">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => router.push('/admin/system-setup/regions')}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Advanced Regions
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => router.push('/admin/system-setup/districts')}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Advanced Districts
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => router.push('/admin/system-setup/areas')}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all font-bold"
+            >
+              <MapPin className="w-4 h-4 mr-2" />
+              Advanced Areas
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => router.push('/admin/system-setup/stations')}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all font-bold"
+            >
+              <Warehouse className="w-4 h-4 mr-2" />
+              Advanced Stations
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => router.push('/admin/hospitals')}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all font-bold"
+            >
+              <Building2 className="w-4 h-4 mr-2" />
+              Manage Hospitals
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar Tabs */}
-        <aside className="lg:w-72 shrink-0">
-          <div className="bg-white/70 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-4 shadow-xl shadow-slate-200/50 sticky top-8">
-            <p className="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Master Data Categories</p>
-            <div className="space-y-1">
-              {tabs.map((tab) => {
-                const Icon = tab.icon
-                const isActive = activeTab === tab.id
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as SetupTab)}
-                    className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 ${
-                      isActive 
-                        ? 'bg-primary text-white shadow-lg shadow-primary/30' 
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-primary'
-                    }`}
-                  >
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                    {tab.label}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        </aside>
-
+      <div className="w-full">
         {/* Content Area */}
-        <main className="flex-1 min-w-0">
+        <main className="w-full">
           <Card className="border-none shadow-2xl shadow-slate-200/50 rounded-3xl overflow-hidden bg-white/70 backdrop-blur-xl">
             <CardHeader className="border-b border-slate-100 bg-slate-50/50 p-6 md:p-8">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -291,7 +344,7 @@ export default function SystemSetupPage() {
                       <tr className="bg-slate-50/80 border-b border-slate-100">
                         <th className="px-8 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400">Name & Details</th>
                         {activeTab === 'regions' && <th className="px-8 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400">Code</th>}
-                        {(activeTab === 'districts' || activeTab === 'stations') && <th className="px-8 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400">Location Parent</th>}
+                        {(activeTab === 'districts' || activeTab === 'stations' || activeTab === 'areas' || activeTab === 'hospitals') && <th className="px-8 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400">Location Parent</th>}
                         <th className="px-8 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400 text-right">Actions</th>
                       </tr>
                     </thead>
@@ -307,11 +360,14 @@ export default function SystemSetupPage() {
                               <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-lg text-xs font-black uppercase">{item.code || '-'}</span>
                             </td>
                           )}
-                          {(activeTab === 'districts' || activeTab === 'stations') && (
+                          {(activeTab === 'districts' || activeTab === 'stations' || activeTab === 'areas' || activeTab === 'hospitals') && (
                             <td className="px-8 py-5">
                               <div className="flex items-center gap-2 text-sm text-slate-600 font-semibold italic">
                                 <div className="w-2 h-2 rounded-full bg-primary/30" />
-                                {activeTab === 'districts' ? item.region?.name : item.district?.name}
+                                {activeTab === 'districts' ? item.region?.name : 
+                                 activeTab === 'areas' ? item.district?.name :
+                                 activeTab === 'hospitals' ? `${item.region?.name} / ${item.district?.name}` :
+                                 item.district?.name}
                               </div>
                             </td>
                           )}
@@ -410,6 +466,27 @@ export default function SystemSetupPage() {
             <div className="max-w-lg w-full text-left">
               <IncidentCategoryForm 
                 initialData={editingItem}
+                loading={loading}
+                onCancel={() => setIsModalOpen(false)}
+                onSubmit={(data) => handleSubmit(undefined, data)}
+              />
+            </div>
+          ) : activeTab === 'areas' ? (
+            <div className="max-w-lg w-full text-left">
+              <AreaForm 
+                initialData={editingItem}
+                districts={districts}
+                loading={loading}
+                onCancel={() => setIsModalOpen(false)}
+                onSubmit={(data) => handleSubmit(undefined, data)}
+              />
+            </div>
+          ) : activeTab === 'hospitals' ? (
+            <div className="max-w-lg w-full text-left">
+              <HospitalForm 
+                initialData={editingItem}
+                regions={regions}
+                districts={districts}
                 loading={loading}
                 onCancel={() => setIsModalOpen(false)}
                 onSubmit={(data) => handleSubmit(undefined, data)}

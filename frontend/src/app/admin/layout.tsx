@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { Role } from '@/types'
 import AdminSidebar from '@/components/layout/AdminSidebar'
@@ -15,6 +15,10 @@ export default function AdminLayout({
 }) {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
+
+  // Full-screen immersive routes (no sidebar / topbar)
+  const isFullScreen = ['/admin/emergency-requests/new', '/admin/drivers/add'].includes(pathname)
 
   useEffect(() => {
     if (!loading) {
@@ -41,11 +45,21 @@ export default function AdminLayout({
     return null
   }
 
+  // Immersive full-screen mode — sidebar & topbar hidden
+  if (isFullScreen) {
+    return (
+      <div className="min-h-screen bg-[#F3F4F6]">
+        <LiveToastContainer />
+        {children}
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <LiveToastContainer />
       <AdminSidebar />
-      <div className="ml-64">
+      <div className="ml-56">
         <AdminTopBar />
         <main className="p-6">
           {children}

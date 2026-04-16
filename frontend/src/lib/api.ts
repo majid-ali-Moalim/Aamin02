@@ -291,7 +291,32 @@ export const emergencyRequestsService = {
   getAvailableNurses: async () => {
     const api = new ApiService()
     return await api.get('/api/emergency-requests/available/nurses')
-  }
+  },
+
+  cancelRequest: async (id: string, reason: string) => {
+    const api = new ApiService()
+    return await api.patch(`/api/emergency-requests/${id}/cancel`, { reason })
+  },
+
+  escalateRequest: async (id: string, reason?: string) => {
+    const api = new ApiService()
+    return await api.patch(`/api/emergency-requests/${id}/escalate`, { reason })
+  },
+
+  markFailed: async (id: string, reason: string) => {
+    const api = new ApiService()
+    return await api.patch(`/api/emergency-requests/${id}/fail`, { reason })
+  },
+
+  getTimeline: async (id: string) => {
+    const api = new ApiService()
+    return await api.get(`/api/emergency-requests/${id}/timeline`)
+  },
+
+  getByStatus: async (status: string) => {
+    const api = new ApiService()
+    return await api.get(`/api/emergency-requests?status=${status}`)
+  },
 }
 
 // Referrals service
@@ -377,6 +402,74 @@ export const systemSetupService = {
     const url = districtId ? `/api/setup/stations?districtId=${districtId}` : '/api/setup/stations'
     return await api.get(url)
   },
+  getAreas: async (districtId?: string) => {
+    const api = new ApiService()
+    const url = districtId ? `/api/setup/areas?districtId=${districtId}` : '/api/setup/areas'
+    return await api.get(url)
+  },
+  getHospitals: async (districtId?: string) => {
+    const api = new ApiService()
+    const url = districtId ? `/api/setup/hospitals?districtId=${districtId}` : '/api/setup/hospitals'
+    return await api.get(url)
+  },
+
+  // --- Region CRUD ---
+  createRegion: async (data: any) => {
+    const api = new ApiService()
+    return await api.post('/api/setup/region', data)
+  },
+  updateRegion: async (id: string, data: any) => {
+    const api = new ApiService()
+    return await api.patch(`/api/setup/region/${id}`, data)
+  },
+  deleteRegion: async (id: string) => {
+    const api = new ApiService()
+    return await api.delete(`/api/setup/region/${id}`)
+  },
+
+  // --- District CRUD ---
+  createDistrict: async (data: any) => {
+    const api = new ApiService()
+    return await api.post('/api/setup/district', data)
+  },
+  updateDistrict: async (id: string, data: any) => {
+    const api = new ApiService()
+    return await api.patch(`/api/setup/district/${id}`, data)
+  },
+  deleteDistrict: async (id: string) => {
+    const api = new ApiService()
+    return await api.delete(`/api/setup/district/${id}`)
+  },
+
+  // --- Station CRUD ---
+  createStation: async (data: any) => {
+    const api = new ApiService()
+    return await api.post('/api/setup/station', data)
+  },
+  updateStation: async (id: string, data: any) => {
+    const api = new ApiService()
+    return await api.patch(`/api/setup/station/${id}`, data)
+  },
+  deleteStation: async (id: string) => {
+    const api = new ApiService()
+    return await api.delete(`/api/setup/station/${id}`)
+  },
+
+  // --- Area CRUD ---
+  createArea: async (data: any) => {
+    const api = new ApiService()
+    return await api.post('/api/setup/area', data)
+  },
+  updateArea: async (id: string, data: any) => {
+    const api = new ApiService()
+    return await api.patch(`/api/setup/area/${id}`, data)
+  },
+  deleteArea: async (id: string) => {
+    const api = new ApiService()
+    return await api.delete(`/api/setup/area/${id}`)
+  },
+
+  // --- Generic Fallback ---
   create: async (model: string, data: any) => {
     const api = new ApiService()
     return await api.post(`/api/setup/${model}`, data)
@@ -543,5 +636,29 @@ export const uploadService = {
   uploadFile: async (file: File) => {
     const api = new ApiService()
     return await api.upload('/api/uploads', file)
+  }
+}
+
+// Hospitals service
+export const hospitalsService = {
+  getAll: async (filters?: { regionId?: string; districtId?: string }) => {
+    const api = new ApiService()
+    const params = new URLSearchParams()
+    if (filters?.regionId) params.append('regionId', filters.regionId)
+    if (filters?.districtId) params.append('districtId', filters.districtId)
+    const queryString = params.toString() ? `?${params.toString()}` : ''
+    return await api.get<any[]>(`/api/hospitals${queryString}`)
+  },
+  create: async (data: any) => {
+    const api = new ApiService()
+    return await api.post<any>('/api/hospitals', data)
+  },
+  update: async (id: string, data: any) => {
+    const api = new ApiService()
+    return await api.patch<any>(`/api/hospitals/${id}`, data)
+  },
+  delete: async (id: string) => {
+    const api = new ApiService()
+    return await api.delete(`/api/hospitals/${id}`)
   }
 }

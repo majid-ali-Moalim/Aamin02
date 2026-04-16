@@ -4,270 +4,173 @@ import {
   Phone, Mail, Calendar, Info, 
   CreditCard, Upload, Eye, EyeOff, CheckCircle2,
   AlertCircle, ChevronRight, X, BookOpen, 
-  Lock, Settings, Briefcase, Activity
+  Lock, Settings, Briefcase, Activity, Landmark,
+  Medal, GraduationCap, FileText, UserCheck, 
+  UserMinus, UserPlus, Siren, HeartPulse
 } from 'lucide-react'
-import { Station, Ambulance, Department, EmployeeRole } from '@/types'
+import { Station, Ambulance, Department, EmployeeRole, Region, District } from '@/types'
 import { uploadService } from '@/lib/api'
 import { toast } from 'react-hot-toast'
 
-// --- Reusable Input Components ---
-const FormInput = ({ label, required, icon: Icon, prefix, ...props }: any) => (
-  <div className="space-y-2 focus-within:z-10 group">
-    <label className="flex items-center text-[10px] font-black text-gray-400 uppercase tracking-[0.1em] ml-1 transition-colors group-focus-within:text-red-600">
-      {label} {required && <span className="text-red-500 ml-1.5 font-bold text-sm">*</span>}
-    </label>
-    <div className="relative group/input">
-      <div className="absolute inset-0 bg-red-600/0 border border-transparent rounded-xl transition-all group-focus-within/input:border-red-500/30 group-focus-within/input:ring-4 group-focus-within/input:ring-red-100/50" />
-      <div className="relative flex items-center h-12 bg-white border border-gray-200/80 rounded-xl group-focus-within/input:border-red-500/40 group-focus-within/input:shadow-md group-hover/input:border-gray-300 transition-all overflow-hidden px-4 shadow-sm">
-        {prefix && (
-          <div className="h-full pr-3 flex items-center gap-1.5 border-r border-gray-100 bg-gray-50/50 text-xs font-bold text-gray-500">
-            {prefix}
-          </div>
-        )}
-        {Icon && <Icon className={`w-4 h-4 text-gray-400 group-focus-within:text-red-500 transition-colors ${prefix ? 'ml-3' : ''}`} />}
-        <input
-          {...props}
-          className={`flex-1 h-full bg-transparent border-none focus:ring-0 text-sm font-bold text-gray-800 placeholder:text-gray-300 placeholder:font-medium outline-none ml-2`}
-        />
-      </div>
-    </div>
-  </div>
-)
+// --- Tactical UI Components ---
 
-const FormSelect = ({ label, required, options, ...props }: any) => (
-  <div className="space-y-2 group focus-within:z-10">
-    <label className="flex items-center text-[10px] font-black text-gray-400 uppercase tracking-[0.1em] ml-1 transition-colors group-focus-within:text-red-600">
-      {label} {required && <span className="text-red-500 ml-1.5 font-bold text-sm">*</span>}
-    </label>
-    <div className="relative group/input">
-       <div className="absolute inset-0 bg-red-600/0 border border-transparent rounded-xl transition-all group-focus-within/input:border-red-500/30 group-focus-within/input:ring-4 group-focus-within/input:ring-red-100/50" />
-       <div className="relative flex items-center h-12 bg-white border border-gray-200/80 rounded-xl group-focus-within/input:border-red-500/40 group-focus-within/input:shadow-md group-hover/input:border-gray-300 transition-all overflow-hidden shadow-sm">
-        <select
-          {...props}
-          className="flex-1 h-full px-4 bg-transparent border-none focus:ring-0 text-sm font-bold text-gray-800 cursor-pointer appearance-none outline-none"
-        >
-          <option value="" className="text-gray-400">Select {label}</option>
-          {options?.map((opt: any) => (
-            <option key={opt.id} value={opt.id}>{opt.name || opt.ambulanceNumber}</option>
-          ))}
-        </select>
-        <ChevronRight className="w-4 h-4 text-gray-400 mr-4 rotate-90 pointer-events-none group-focus-within/input:text-red-500 transition-colors" />
-      </div>
-    </div>
-  </div>
-)
-
-const FileUploadField = ({ label, value, onChange, accept = "image/*" }: any) => {
-  const [isUploading, setIsUploading] = React.useState(false)
-  const [localPreview, setLocalPreview] = React.useState<string | null>(null)
-  const fileInputRef = React.useRef<HTMLInputElement>(null)
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (file.type.startsWith('image/')) setLocalPreview(URL.createObjectURL(file))
-    try {
-      setIsUploading(true)
-      const res = await uploadService.uploadFile(file)
-      onChange(res.url)
-      toast.success(`${label} uploaded`)
-    } catch (error) {
-      toast.error(`Upload failed`)
-      setLocalPreview(null)
-    } finally {
-      setIsUploading(false)
-    }
+export const SectionHeader = ({ icon: Icon, title, subtitle, color = "red" }: any) => {
+  const colorMap: any = {
+    red: "bg-red-600 shadow-red-900/20",
+    blue: "bg-blue-600 shadow-blue-900/20",
+    slate: "bg-slate-700 shadow-slate-900/20",
+    green: "bg-green-600 shadow-green-900/20"
   }
-
-  const displayUrl = localPreview || (value?.startsWith('/uploads') ? `http://localhost:3001${value}` : value)
-
+  
   return (
-    <div className="space-y-1.5 group">
-      <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{label}</label>
-      <div 
-        onClick={() => fileInputRef.current?.click()}
-        className="relative h-24 border-2 border-dashed border-gray-100 rounded-xl bg-gray-50/30 hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer overflow-hidden"
-      >
-        {displayUrl ? (
-          <img src={displayUrl} alt="Preview" className="w-full h-full object-cover" />
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full">
-            <Upload className="w-4 h-4 text-gray-400 mb-1" />
-            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Upload photo</span>
-          </div>
-        )}
-        <input type="file" ref={fileInputRef} className="hidden" accept={accept} onChange={handleFileChange} />
+    <div className="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100/50">
+      <div className={`p-2.5 rounded-xl text-white shadow-lg ${colorMap[color] || colorMap.red}`}>
+        <Icon className="w-5 h-5 stroke-[2.5]" />
+      </div>
+      <div>
+        <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">{title}</h3>
+        {subtitle && <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.15em] mt-0.5">{subtitle}</p>}
       </div>
     </div>
   )
 }
 
-// --- Specific Steps (1 to 5) ---
+export const TacticalBadge = ({ label, color = "blue", icon: Icon }: any) => {
+  const colorMap: any = {
+    blue: "bg-blue-50 text-blue-600 border-blue-100",
+    green: "bg-green-50 text-green-600 border-green-100",
+    red: "bg-red-50 text-red-600 border-red-100",
+    amber: "bg-amber-50 text-amber-600 border-amber-100",
+    slate: "bg-slate-50 text-slate-600 border-slate-100"
+  }
+  
+  return (
+    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${colorMap[color]}`}>
+      {Icon && <Icon className="w-3 h-3" />}
+      {label}
+    </div>
+  )
+}
 
-export const PersonalInfoSection = ({ formData, setFormData }: any) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <FormInput label="First Name" required placeholder="Enter first name" icon={User} value={formData.firstName} onChange={(e: any) => setFormData({...formData, firstName: e.target.value})} />
-      <FormInput label="Last Name" required placeholder="Enter last name" icon={User} value={formData.lastName} onChange={(e: any) => setFormData({...formData, lastName: e.target.value})} />
-      <FormSelect label="Gender" required options={[{id: 'MALE', name: 'Male'}, {id: 'FEMALE', name: 'Female'}]} value={formData.gender} onChange={(e: any) => setFormData({...formData, gender: e.target.value})} />
-      <FormInput label="Date of Birth" required type="date" value={formData.dateOfBirth} onChange={(e: any) => setFormData({...formData, dateOfBirth: e.target.value})} />
-      <FormInput label="National / Employee ID" placeholder="Optional" icon={CreditCard} value={formData.nationalId} onChange={(e: any) => setFormData({...formData, nationalId: e.target.value})} />
-      <div className="md:col-span-2">
-         <FormInput label="Address" placeholder="Full residential address" icon={MapPin} value={formData.address} onChange={(e: any) => setFormData({...formData, address: e.target.value})} />
+// --- Reusable Input Components ---
+
+export const FormInput = ({ label, required, icon: Icon, prefix, error, ...props }: any) => (
+  <div className="space-y-1.5 group">
+    <div className="flex items-center justify-between">
+      <label className="flex items-center text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 group-focus-within:text-red-600 transition-colors">
+        {label} {required && <span className="text-red-500 ml-1 font-bold">*</span>}
+      </label>
+      {error && <span className="text-[9px] font-bold text-red-500 uppercase tracking-tighter">{error}</span>}
+    </div>
+    <div className="relative group/input">
+      <div className="absolute inset-0 bg-red-600/0 border border-transparent rounded-xl transition-all group-focus-within/input:border-red-500/20 group-focus-within/input:ring-4 group-focus-within/input:ring-red-100/30" />
+      <div className={`relative flex items-center h-12 bg-white border ${error ? 'border-red-300 shadow-red-50' : 'border-gray-200'} rounded-xl group-focus-within/input:border-red-500/40 group-focus-within/input:shadow-md transition-all px-4 shadow-sm`}>
+        {prefix && (
+          <div className="pr-3 flex items-center gap-1.5 border-r border-gray-100 text-[11px] font-black text-gray-400">
+            {prefix}
+          </div>
+        )}
+        {Icon && <Icon className={`w-4 h-4 text-gray-300 group-focus-within:text-red-500 transition-colors ${prefix ? 'ml-3' : ''}`} />}
+        <input
+          {...props}
+          className="flex-1 h-full bg-transparent border-none focus:ring-0 text-[13px] font-bold text-gray-800 placeholder:text-gray-300 placeholder:font-medium outline-none ml-2"
+        />
       </div>
     </div>
-    <div className="lg:col-span-1">
-      <FileUploadField label="Profile Photo" value={formData.profilePhoto} onChange={(url: string) => setFormData({...formData, profilePhoto: url})} />
-    </div>
   </div>
 )
 
-export const ContactEmergencySection = ({ formData, setFormData }: any) => (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <div className="space-y-6 md:col-span-2">
-       <h3 className="text-xs font-black text-gray-900 uppercase tracking-widest mb-4">Contact Details</h3>
-       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormInput label="Phone Number" required prefix="+252" icon={Phone} value={formData.phone} onChange={(e: any) => setFormData({...formData, phone: e.target.value})} />
-          <FormInput label="Alternate Phone" prefix="+252" icon={Phone} value={formData.alternatePhone} onChange={(e: any) => setFormData({...formData, alternatePhone: e.target.value})} />
-          <div className="md:col-span-2">
-             <FormInput label="Email Address" required type="email" icon={Mail} value={formData.email} onChange={(e: any) => setFormData({...formData, email: e.target.value})} />
-          </div>
-       </div>
+export const FormSelect = ({ label, required, options, icon: Icon, error, ...props }: any) => (
+  <div className="space-y-1.5 group">
+    <div className="flex items-center justify-between">
+      <label className="flex items-center text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 group-focus-within:text-red-600 transition-colors">
+        {label} {required && <span className="text-red-500 ml-1 font-bold">*</span>}
+      </label>
+      {error && <span className="text-[9px] font-bold text-red-500 uppercase tracking-tighter">{error}</span>}
     </div>
-    <div className="space-y-6">
-       <h3 className="text-xs font-black text-gray-900 uppercase tracking-widest mb-4">Emergency Contact</h3>
-       <FormInput label="Contact Name" required icon={User} value={formData.emergencyContactName} onChange={(e: any) => setFormData({...formData, emergencyContactName: e.target.value})} />
-       <FormInput label="Contact Phone" required prefix="+252" icon={Phone} value={formData.emergencyPhone} onChange={(e: any) => setFormData({...formData, emergencyPhone: e.target.value})} />
-    </div>
-  </div>
-)
-
-export const AccountAccessSection = ({ formData, setFormData }: any) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <div className="space-y-6">
-       <FormInput label="Username / Login Email" required icon={Mail} value={formData.username} onChange={(e: any) => setFormData({...formData, username: e.target.value})} />
-       <FormInput label="Password" required type="password" icon={Lock} value={formData.password} onChange={(e: any) => setFormData({...formData, password: e.target.value})} />
-       <FormInput label="Confirm Password" required type="password" icon={Lock} value={formData.confirmPassword} onChange={(e: any) => setFormData({...formData, confirmPassword: e.target.value})} />
-    </div>
-    <div className="space-y-6 bg-gray-50/50 p-8 rounded-3xl border border-gray-100">
-       <div className="flex items-center justify-between mb-2">
-          <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Account Status</label>
-          <div 
-             onClick={() => setFormData({...formData, status: formData.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'})}
-             className={`w-12 h-6 rounded-full cursor-pointer transition-all p-1 ${formData.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-200'}`}
-          >
-             <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-all ${formData.status === 'ACTIVE' ? 'translate-x-6' : 'translate-x-0'}`} />
-          </div>
-       </div>
-       <div className="space-y-3">
-          <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Direct Permissions</label>
-          <div className="flex flex-wrap gap-2">
-             {['View Dispatch', 'Manage Fleet', 'Edit Employees', 'System Setup'].map(perm => {
-                const isSelected = formData.permissions?.includes(perm)
-                return (
-                  <button 
-                    key={perm}
-                    onClick={() => {
-                       const perms = formData.permissions || []
-                       setFormData({
-                          ...formData, 
-                          permissions: isSelected ? perms.filter((p: any) => p !== perm) : [...perms, perm]
-                       })
-                    }}
-                    className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all shadow-sm ${isSelected ? 'bg-red-600 text-white' : 'bg-white text-gray-400 border border-gray-100 hover:bg-gray-50'}`}
-                  >
-                    {perm}
-                  </button>
-                )
-             })}
-          </div>
-       </div>
-    </div>
-  </div>
-)
-
-export const ShiftStationSection = ({ formData, setFormData, stations }: any) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <div className="space-y-6">
-       <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Shift Type</label>
-       <div className="grid grid-cols-1 gap-3">
-          {['Morning', 'Night', 'Rotational'].map(type => (
-            <button
-               key={type}
-               onClick={() => setFormData({...formData, defaultShift: type})}
-               className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${formData.defaultShift === type ? 'border-red-600 bg-red-50 text-red-600 shadow-lg' : 'border-gray-50 bg-white text-gray-400 hover:border-gray-200'}`}
-            >
-               <div className="flex items-center gap-4">
-                  <div className={`p-2 rounded-xl ${formData.defaultShift === type ? 'bg-red-600 text-white' : 'bg-gray-100'}`}>
-                     <Clock className="w-4 h-4" />
-                  </div>
-                  <span className="text-sm font-black uppercase tracking-wider">{type}</span>
-               </div>
-               {formData.defaultShift === type && <CheckCircle2 className="w-5 h-5" />}
-            </button>
+    <div className="relative group/input">
+       <div className="absolute inset-0 bg-red-600/0 border border-transparent rounded-xl transition-all group-focus-within/input:border-red-500/20 group-focus-within/input:ring-4 group-focus-within/input:ring-red-100/30" />
+       <div className={`relative flex items-center h-12 bg-white border ${error ? 'border-red-300' : 'border-gray-200'} rounded-xl group-focus-within/input:border-red-500/40 group-focus-within/input:shadow-md transition-all px-4 shadow-sm`}>
+        {Icon && <Icon className="w-4 h-4 text-gray-300 group-focus-within:text-red-500 transition-colors" />}
+        <select
+          {...props}
+          className={`flex-1 h-full ${Icon ? 'px-3' : 'px-0'} bg-transparent border-none focus:ring-0 text-[13px] font-bold text-gray-800 cursor-pointer appearance-none outline-none`}
+        >
+          <option value="">Select {label}</option>
+          {options?.map((opt: any) => (
+            <option key={opt.id} value={opt.id}>{opt.name || opt.ambulanceNumber || opt.label}</option>
           ))}
-       </div>
-    </div>
-    <div className="space-y-8">
-       <FormSelect label="Availability Status" required options={[{id: 'AVAILABLE', name: 'Available'}, {id: 'ONDUTY', name: 'On Duty'}, {id: 'OFFLINE', name: 'Offline'}]} value={formData.shiftStatus} onChange={(e: any) => setFormData({...formData, shiftStatus: e.target.value})} />
-       <FormSelect label="Assigned Station" required options={stations} value={formData.stationId} onChange={(e: any) => setFormData({...formData, stationId: e.target.value})} />
-       
-       <div className="p-6 bg-blue-50/50 rounded-3xl border border-blue-100">
-          <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest mb-2 flex items-center gap-2">
-             <Info className="w-4 h-4" />
-             Assignment Logic
-          </p>
-          <p className="text-xs text-blue-500/80 font-semibold leading-relaxed tracking-tight">
-             Shift changes affect automatic dispatch priority. Please ensure the station matches the primary geographic area of activity.
-          </p>
-       </div>
+        </select>
+        <ChevronRight className="w-3.5 h-3.5 text-gray-300 rotate-90 ml-2" />
+      </div>
     </div>
   </div>
 )
 
-export const ReviewEmployeeSection = ({ formData, setFormData }: any) => (
-  <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-           { label: 'Full Name', value: `${formData.firstName} ${formData.lastName}`, icon: User },
-           { label: 'Role / Level', value: formData.permissions?.join(', ') || 'Standard', icon: Briefcase },
-           { label: 'Phone', value: `+252 ${formData.phone}`, icon: Phone },
-           { label: 'Shift', value: formData.defaultShift, icon: Clock }
-        ].map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-xl hover:border-red-600/20 transition-all">
-             <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 rounded-xl bg-gray-50 text-gray-400 group-hover:bg-red-600 group-hover:text-white transition-colors">
-                   <stat.icon className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</span>
-             </div>
-             <p className="text-sm font-black text-gray-900 line-clamp-1">{stat.value || 'N/A'}</p>
+export const FormCheckbox = ({ label, checked, onChange, description }: any) => (
+  <label className="flex items-start gap-3 cursor-pointer group p-3 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+    <div className="relative mt-0.5">
+      <input 
+        type="checkbox" 
+        checked={checked} 
+        onChange={onChange}
+        className="w-5 h-5 rounded-md border-2 border-gray-200 text-red-600 focus:ring-4 focus:ring-red-100 transition-all cursor-pointer" 
+      />
+    </div>
+    <div className="flex-1">
+      <p className="text-[11px] font-black text-gray-900 uppercase tracking-wider group-hover:text-red-600 transition-colors">{label}</p>
+      {description && <p className="text-[10px] text-gray-400 font-bold tracking-tight mt-0.5">{description}</p>}
+    </div>
+  </label>
+)
+
+export const FileUploadCard = ({ label, icon: Icon, value, onChange, accept = "*/*", description }: any) => {
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const [isUploading, setIsUploading] = React.useState(false)
+
+  const handleUpload = async (e: any) => {
+    const file = e.target.files[0]
+    if (!file) return
+    try {
+      setIsUploading(true)
+      const res = await uploadService.uploadFile(file)
+      onChange(res.url)
+      toast.success(`${label} uploaded`)
+    } catch (err) {
+      toast.error('Upload failed')
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{label}</label>
+      <div 
+        onClick={() => fileInputRef.current?.click()}
+        className={`relative p-6 border-2 border-dashed rounded-2xl transition-all cursor-pointer flex flex-col items-center justify-center text-center
+          ${value ? 'border-green-500 bg-green-50/30' : 'border-gray-100 bg-gray-50/50 hover:border-blue-500 hover:bg-blue-50/30'}
+        `}
+      >
+        {isUploading ? (
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+        ) : value ? (
+          <div className="space-y-2">
+            <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto" />
+            <p className="text-[10px] font-black text-green-600 uppercase tracking-widest">Document Attached</p>
+            <p className="text-[9px] text-gray-400 truncate max-w-[150px]">{value.split('/').pop()}</p>
           </div>
-        ))}
-     </div>
-
-     <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
-        <label className="text-[10px] font-black text-gray-700 uppercase tracking-widest mb-4 block">Notes / Remarks</label>
-        <textarea 
-           placeholder="Add any specific operational notes about this employee..."
-           className="w-full h-32 p-4 bg-gray-50 border-none rounded-3xl text-sm font-medium focus:ring-4 focus:ring-red-100 transition-all"
-           value={formData.notes}
-           onChange={(e) => setFormData({...formData, notes: e.target.value})}
-        />
-        
-        <div className="mt-8 pt-8 border-t border-gray-50">
-           <label className="flex items-center gap-4 cursor-pointer group">
-              <input 
-                 type="checkbox"
-                 className="w-6 h-6 rounded-lg border-2 border-gray-200 text-red-600 focus:ring-4 focus:ring-red-100 transition-all cursor-pointer"
-                 onChange={(e) => setFormData({...formData, confirmed: e.target.checked})}
-              />
-              <div>
-                 <p className="text-xs font-black text-gray-900 uppercase tracking-wider">I confirm all information is correct</p>
-                 <p className="text-[10px] text-gray-400 font-bold tracking-tight">This will create a permanent record in the Aamin Dispatch System</p>
-              </div>
-           </label>
-        </div>
-     </div>
-  </div>
-)
+        ) : (
+          <div className="space-y-2">
+            <div className="p-3 rounded-full bg-white shadow-sm border border-gray-100 mx-auto w-fit">
+              <Icon className="w-5 h-5 text-gray-400" />
+            </div>
+            <p className="text-[10px] font-black text-gray-700 uppercase tracking-widest">{description || 'Click to upload files'}</p>
+            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-tight">PDF, JPG, PNG up to 10MB</p>
+          </div>
+        )}
+        <input type="file" ref={fileInputRef} className="hidden" accept={accept} onChange={handleUpload} />
+      </div>
+    </div>
+  )
+}

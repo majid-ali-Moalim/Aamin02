@@ -66,16 +66,36 @@ export class EmergencyRequestsService {
           }
 
           // Whitelist Patient Fields
+          // Compute age from dateOfBirth if provided, otherwise use raw age
+          let resolvedAge: number | null = null;
+          let resolvedDob: Date | null = null;
+
+          if (data.newPatient.dateOfBirth) {
+            resolvedDob = new Date(data.newPatient.dateOfBirth);
+            if (!isNaN(resolvedDob.getTime())) {
+              resolvedAge = new Date().getFullYear() - resolvedDob.getFullYear();
+            }
+          } else if (data.newPatient.age) {
+            resolvedAge = parseInt(String(data.newPatient.age), 10);
+            // Derive approximate DOB as Jan 1 of (currentYear - age)
+            const birthYear = new Date().getFullYear() - resolvedAge;
+            resolvedDob = new Date(`${birthYear}-01-01T00:00:00.000Z`);
+          }
+
           const newPatRow = await this.prisma.patient.create({
             data: {
               userId,
               patientCode,
               fullName: String(data.newPatient.fullName),
-              age: data.newPatient.age ? parseInt(String(data.newPatient.age), 10) : null,
+              age: resolvedAge,
+              dateOfBirth: resolvedDob,
               gender: data.newPatient.gender || null,
-              bloodType: data.newPatient.bloodType || null,
+              bloodType: this.mapBloodType(data.newPatient.bloodType) as any || null,
               phone: String(data.newPatient.phone),
               alternatePhone: data.newPatient.alternatePhone || null,
+              nationalityType: data.newPatient.nationalityType || 'LOCAL',
+              country: data.newPatient.country || (data.newPatient.nationalityType === 'INTERNATIONAL' ? null : 'Somalia'),
+              maritalStatus: data.newPatient.maritalStatus || 'UNKNOWN',
               address: "Self-Registered Dispatch",
             }
           });
@@ -91,7 +111,7 @@ export class EmergencyRequestsService {
       // This prevents Prisma 'Invalid invocation' errors from unknown frontend fields
       // ISOLATION TEST: Bare minimum fields to find the bug
       const finalPayload: any = {
-        trackingCode: data.trackingCode || this.generateTrackingCode(),
+        trackingCode: data.trackingCode || await this.generateTrackingCode(),
         priority: data.priority || 'MEDIUM',
         requestSource: data.requestSource || 'PHONE_CALL',
         pickupLocation: String(data.pickupLocation),
@@ -103,22 +123,39 @@ export class EmergencyRequestsService {
       if (data.incidentCategoryId) finalPayload.incidentCategory = { connect: { id: data.incidentCategoryId } };
       if (data.regionId) finalPayload.region = { connect: { id: data.regionId } };
       if (data.districtId) finalPayload.district = { connect: { id: data.districtId } };
-      
+      if (data.destinationHospitalId) finalPayload.destinationHospital = { connect: { id: data.destinationHospitalId } };
+
       // Add optional string fields
       const optionalStrings = [
-        'destination', 'callerName', 'callerPhone', 'symptoms', 
-        'pickupLandmark', 'destinationLandmark', 'patientCondition', 
+        'destination', 'callerName', 'callerPhone', 'symptoms',
+        'pickupLandmark', 'destinationLandmark', 'patientCondition',
+        'consciousStatus', 'breathingStatus', 'bleedingStatus',
         'notes', 'manualDispatchNotes'
       ];
       optionalStrings.forEach(field => {
         if (data[field]) finalPayload[field] = String(data[field]);
       });
 
+      // Add boolean flags
+      if (data.needsOxygen !== undefined) finalPayload.needsOxygen = Boolean(data.needsOxygen);
+      if (data.needsStretcher !== undefined) finalPayload.needsStretcher = Boolean(data.needsStretcher);
+
+      // Add Dispatch Assignment if provided
+      let isAssigned = false;
+      if (data.ambulanceId) { finalPayload.ambulance = { connect: { id: data.ambulanceId } }; isAssigned = true; }
+      if (data.driverId) { finalPayload.driver = { connect: { id: data.driverId } }; isAssigned = true; }
+      if (data.nurseId) { finalPayload.nurse = { connect: { id: data.nurseId } }; isAssigned = true; }
+
+      if (isAssigned) {
+        finalPayload.status = 'ASSIGNED';
+        finalPayload.assignedAt = new Date();
+      }
+
       console.log('DIAGNOSTIC - Sending to Prisma:', JSON.stringify(finalPayload, null, 2));
 
       const request = await this.prisma.emergencyRequest.create({
         data: finalPayload,
-        include: { patient: true }
+        include: { patient: true, driver: true, nurse: true }
       });
 
       await this.notifications.create({
@@ -130,6 +167,30 @@ export class EmergencyRequestsService {
         relatedId: request.id,
         actionUrl: `/admin/emergency-requests?id=${request.id}`
       });
+
+      if (request.driver?.userId) {
+        await this.notifications.create({
+          title: 'New Emergency Assignment',
+          message: `You have been assigned as Driver to request ${request.trackingCode}. Please prepare for dispatch.`,
+          type: 'EMERGENCY',
+          priority: request.priority as any,
+          userId: request.driver.userId,
+          relatedModule: 'EmergencyRequest',
+          relatedId: request.id,
+        });
+      }
+
+      if (request.nurse?.userId) {
+        await this.notifications.create({
+          title: 'New Emergency Assignment',
+          message: `You have been assigned as Nurse to request ${request.trackingCode}. Please prepare for clinical support.`,
+          type: 'EMERGENCY',
+          priority: request.priority as any,
+          userId: request.nurse.userId,
+          relatedModule: 'EmergencyRequest',
+          relatedId: request.id,
+        });
+      }
 
       return request;
     } catch (error: any) {
@@ -227,7 +288,26 @@ export class EmergencyRequestsService {
             },
           },
         },
-        ambulance: true,
+        ambulance: {
+          include: {
+            station: true,
+            equipmentLevel: true,
+          }
+        },
+        nurse: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                email: true,
+              },
+            },
+          },
+        },
+        statusLogs: {
+          orderBy: { createdAt: 'desc' }
+        },
         referrals: true,
       },
     });
@@ -385,10 +465,26 @@ export class EmergencyRequestsService {
     });
   }
 
-  private generateTrackingCode(): string {
-    const timestamp = Date.now().toString(36);
-    const random = Math.random().toString(36).substr(2, 5);
-    return `AAM-${timestamp}-${random}`.toUpperCase();
+  private async generateTrackingCode(): Promise<string> {
+    const year = new Date().getFullYear();
+    const count = await this.prisma.emergencyRequest.count();
+    const sequence = String(count + 1).padStart(4, '0');
+    return `CASE-${year}-${sequence}`;
+  }
+
+  private mapBloodType(type: string): string | null {
+    if (!type) return null;
+    const mapping: Record<string, string> = {
+      'A+': 'A_POSITIVE',
+      'A-': 'A_NEGATIVE',
+      'B+': 'B_POSITIVE',
+      'B-': 'B_NEGATIVE',
+      'AB+': 'AB_POSITIVE',
+      'AB-': 'AB_NEGATIVE',
+      'O+': 'O_POSITIVE',
+      'O-': 'O_NEGATIVE',
+    };
+    return mapping[type] || null;
   }
 
   async getAvailableAmbulances() {

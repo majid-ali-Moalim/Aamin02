@@ -20,6 +20,7 @@ model Region {
   requests    EmergencyRequest[]
   patients    Patient[]
   stations    Station[]
+  hospitals   Hospital[]
 
   @@index([name])
   @@map("regions")
@@ -38,11 +39,30 @@ model District {
   requests    EmergencyRequest[]
   patients    Patient[]
   stations    Station[]
+  areas       Area[]
+  hospitals   Hospital[]
 
   @@unique([name, regionId])
   @@index([regionId])
   @@index([name])
   @@map("districts")
+}
+
+model Area {
+  id                  String   @id @default(cuid())
+  name                String
+  districtId          String
+  landmarkDescription String?
+  directionNotes      String?
+  accessibilityLevel  String?  @default("MODERATE")
+  riskLevel           String?  @default("MEDIUM")
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  district            District @relation(fields: [districtId], references: [id], onDelete: Cascade)
+
+  @@index([districtId])
+  @@map("areas")
 }
 
 model Station {
@@ -213,6 +233,7 @@ model Patient {
   patientCode       String             @unique
   fullName          String
   age               Int?
+  dateOfBirth       DateTime?
   gender            Gender?
   phone             String
   alternatePhone    String?
@@ -221,6 +242,9 @@ model Patient {
   regionId          String?
   districtId        String?
   bloodType         BloodType?
+  nationalityType   NationalityType    @default(LOCAL)
+  country           String?            @default("Somalia")
+  maritalStatus     MaritalStatus      @default(UNKNOWN)
   conditions        String?
   allergies         String?
   insuranceProvider String?
@@ -295,9 +319,15 @@ model EmergencyRequest {
   pickupLocation       String
   pickupLandmark       String?
   destination          String?
+  destinationHospitalId String?
   destinationLandmark  String?
   patientCondition     String?
   symptoms             String?
+  consciousStatus      String?
+  breathingStatus      String?
+  bleedingStatus       String?
+  needsOxygen          Boolean                @default(false)
+  needsStretcher       Boolean                @default(false)
   notes                String?
   manualDispatchNotes  String?
   assignedAt           DateTime?
@@ -320,6 +350,7 @@ model EmergencyRequest {
   nurse                Employee?              @relation("NurseRequests", fields: [nurseId], references: [id])
   incidentCategory     IncidentCategory?      @relation(fields: [incidentCategoryId], references: [id])
   patient              Patient                @relation(fields: [patientId], references: [id])
+  destinationHospital  Hospital?              @relation(fields: [destinationHospitalId], references: [id])
   region               Region?                @relation(fields: [regionId], references: [id])
   statusLogs           EmergencyStatusLog[]
   referrals            Referral?
@@ -333,6 +364,7 @@ model EmergencyRequest {
   @@index([incidentCategoryId])
   @@index([regionId])
   @@index([districtId])
+  @@index([destinationHospitalId])
   @@index([status])
   @@index([priority])
   @@index([createdAt])
@@ -358,14 +390,41 @@ model EmergencyStatusLog {
 model Referral {
   id                 String           @id @default(cuid())
   emergencyRequestId String           @unique
-  hospitalName       String
+  hospitalName       String?
+  hospitalId         String?
   status             ReferralStatus   @default(PENDING)
   notes              String?
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   emergencyRequest   EmergencyRequest @relation(fields: [emergencyRequestId], references: [id], onDelete: Cascade)
+  hospital           Hospital?        @relation(fields: [hospitalId], references: [id])
 
+  @@index([hospitalId])
   @@map("referrals")
+}
+
+model Hospital {
+  id              String             @id @default(cuid())
+  name            String             @unique
+  regionId        String?
+  districtId      String?
+  beds            Int                @default(0)
+  erReady         Boolean            @default(true)
+  status          String             @default("Available")
+  color           String             @default("green")
+  isActive        Boolean            @default(true)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  
+  region          Region?            @relation(fields: [regionId], references: [id])
+  district        District?          @relation(fields: [districtId], references: [id])
+  requests        EmergencyRequest[]
+  referrals       Referral[]
+
+  @@index([regionId])
+  @@index([districtId])
+  @@index([status])
+  @@map("hospitals")
 }
 
 model Notification {
@@ -472,6 +531,19 @@ enum Role {
 enum Gender {
   MALE
   FEMALE
+}
+
+enum NationalityType {
+  LOCAL
+  INTERNATIONAL
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+  UNKNOWN
 }
 
 enum BloodType {

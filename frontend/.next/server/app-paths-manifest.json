@@ -1,9 +1,1 @@
-{
-  "/page": "app/page.js",
-  "/(public)/ambulance-tracking/page": "app/(public)/ambulance-tracking/page.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/admin/dashboard/page": "app/admin/dashboard/page.js",
-  "/admin/drivers/page": "app/admin/drivers/page.js",
-  "/admin/drivers/dispatch/page": "app/admin/drivers/dispatch/page.js",
-  "/admin/emergency-requests/page": "app/admin/emergency-requests/page.js"
-}
+{}

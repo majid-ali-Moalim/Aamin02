@@ -103,4 +103,15 @@ export class SystemSetupService {
       orderBy: { name: 'asc' },
     });
   }
+
+  async getAreas(districtId?: string) {
+    return this.prisma.area.findMany({
+      where: { 
+        isActive: true,
+        ...(districtId ? { districtId } : {})
+      },
+      include: { district: true },
+      orderBy: { name: 'asc' },
+    });
+  }
 }

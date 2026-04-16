@@ -11,6 +11,7 @@ import { EmergencyRequestsModule } from './emergency-requests/emergency-requests
 import { NotificationsModule } from './notifications/notifications.module';
 import { SystemSetupModule } from './system-setup/system-setup.module';
 import { ReportsModule } from './reports/reports.module';
+import { HospitalsModule } from './hospitals/hospitals.module';
 import { DriversModule } from './drivers/drivers.module';
 import { NursesModule } from './nurses/nurses.module';
 
@@ -32,6 +33,7 @@ import { NursesModule } from './nurses/nurses.module';
     NotificationsModule,
     SystemSetupModule,
     ReportsModule,
+    HospitalsModule,
     DriversModule,
     NursesModule,
   ],

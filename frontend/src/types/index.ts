@@ -20,6 +20,19 @@ export enum BloodType {
   O_NEGATIVE = 'O_NEGATIVE',
 }
 
+export enum NationalityType {
+  LOCAL = 'LOCAL',
+  INTERNATIONAL = 'INTERNATIONAL',
+}
+
+export enum MaritalStatus {
+  SINGLE = 'SINGLE',
+  MARRIED = 'MARRIED',
+  DIVORCED = 'DIVORCED',
+  WIDOWED = 'WIDOWED',
+  UNKNOWN = 'UNKNOWN',
+}
+
 // Enums migrated to Master Data tables: EmployeeRole, IncidentCategory
 
 export enum EmergencyRequestStatus {
@@ -218,6 +231,7 @@ export interface Patient {
   patientCode: string;
   fullName: string;
   age?: number | null;
+  dateOfBirth?: string | null;
   gender?: Gender | null;
   phone: string;
   email?: string | null;
@@ -227,6 +241,9 @@ export interface Patient {
   districtId?: string | null;
 
   bloodType?: BloodType | null;
+  nationalityType?: NationalityType;
+  country?: string | null;
+  maritalStatus?: MaritalStatus;
   conditions?: string | null;
   allergies?: string | null;
   insuranceProvider?: string | null;
@@ -292,6 +309,11 @@ export interface EmergencyRequest {
 
   patientCondition?: string | null;
   symptoms?: string | null;
+  consciousStatus?: string | null;
+  breathingStatus?: string | null;
+  bleedingStatus?: string | null;
+  needsOxygen?: boolean;
+  needsStretcher?: boolean;
   notes?: string | null;
   manualDispatchNotes?: string | null;
 

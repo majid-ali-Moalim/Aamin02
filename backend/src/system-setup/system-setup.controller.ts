@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SystemSetupService } from './system-setup.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 
 @ApiTags('system-setup')
@@ -12,10 +13,12 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class SystemSetupController {
   constructor(private readonly setupService: SystemSetupService) {}
 
+  @Public()
   @Get('regions')
   @ApiOperation({ summary: 'Get all active regions' })
   getRegions() { return this.setupService.getRegions(); }
 
+  @Public()
   @Get('districts')
   @ApiOperation({ summary: 'Get all active districts' })
   getDistricts(@Query('regionId') regionId?: string) { return this.setupService.getDistricts(regionId); }
@@ -39,6 +42,11 @@ export class SystemSetupController {
   @Get('stations')
   @ApiOperation({ summary: 'Get all active stations' })
   getStations(@Query('districtId') districtId?: string) { return this.setupService.getStations(districtId); }
+
+  @Public()
+  @Get('areas')
+  @ApiOperation({ summary: 'Get all active areas' })
+  getAreas(@Query('districtId') districtId?: string) { return this.setupService.getAreas(districtId); }
 
   @Post(':model')
   @Roles('ADMIN')

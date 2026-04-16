@@ -33,7 +33,6 @@ export class PatientsService {
         createdAt: true,
         ambulance: { select: { ambulanceNumber: true } },
         referrals: {
-          take: 1,
           select: { hospitalName: true },
         },
       },

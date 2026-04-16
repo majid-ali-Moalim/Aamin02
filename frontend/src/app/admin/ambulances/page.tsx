@@ -573,94 +573,93 @@ export default function AmbulancesPage() {
       )}
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-secondary/80 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-[1.5rem] max-w-lg w-full shadow-[0_20px_50px_rgba(29,53,87,0.3)] overflow-hidden my-auto border-2 border-white">
+          <div className="bg-white rounded-[2rem] max-w-2xl w-full shadow-[0_30px_90px_-20px_rgba(0,0,0,0.5)] overflow-hidden my-auto border-2 border-white/20 animate-in zoom-in-95 duration-500">
             
             {/* Modal Header with Heartbeat Effect */}
-            <div className="bg-gradient-to-r from-blue-50 via-white to-blue-50 p-6 relative overflow-hidden border-b border-blue-100 flex items-center">
+            <div className="bg-[#F8FAFC] p-8 relative overflow-hidden border-b border-gray-100 flex items-center">
               {/* Heartbeat Pulse SVG Background */}
               <div className="absolute inset-x-0 bottom-0 opacity-10 pointer-events-none">
-                <svg viewBox="0 0 1000 100" className="w-full h-12 text-primary stroke-current fill-none stroke-[2]">
+                <svg viewBox="0 0 1000 100" className="w-full h-16 text-primary stroke-current fill-none stroke-[2]">
                   <path d="M0 50 L200 50 L210 40 L220 60 L230 10 L240 90 L250 50 L450 50 L460 40 L470 60 L480 10 L490 90 L500 50 L700 50 L710 40 L720 60 L730 10 L740 90 L750 50 L1000 50" />
                 </svg>
               </div>
               
-              <div className="bg-white p-2 rounded-xl shadow-lg mr-4 border border-blue-50 relative z-10">
-                <Truck className="w-6 h-6 text-primary" />
+              <div className="bg-white p-3 rounded-2xl shadow-xl mr-5 border border-gray-50 relative z-10">
+                <Truck className="w-8 h-8 text-primary" />
               </div>
-              <h2 className="text-xl font-black tracking-tight text-secondary relative z-10">
+              <h2 className="text-3xl font-black tracking-tight text-[#1E293B] relative z-10 flex items-center">
                 Add New Ambulance
               </h2>
               
               <button 
                 onClick={() => setIsAddModalOpen(false)} 
-                className="ml-auto text-secondary/30 hover:text-primary transition-colors relative z-10"
+                className="ml-auto bg-white p-2 rounded-xl text-gray-300 hover:text-red-500 hover:shadow-lg transition-all relative z-10 border border-gray-50"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleAddAmbulance} className="p-6 space-y-6 max-h-[80vh] overflow-y-auto bg-white">
+            <form onSubmit={handleAddAmbulance} className="p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar bg-white">
               
-              {/* Row 1: Identification */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-1">
-                <div className="flex items-center space-x-3">
-                  <span className="text-xs font-bold text-secondary flex-shrink-0">Ambulance No:</span>
+              {/* Top Row: IDs */}
+              <div className="grid grid-cols-2 gap-8 px-2">
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm font-black text-[#64748B] uppercase tracking-wider flex-shrink-0">Ambulance No:</span>
                   <input
                     required
                     type="text"
                     placeholder="AMB-001"
-                    className="flex-grow px-3 py-2 bg-blue-50/50 border border-blue-100 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-bold placeholder:text-secondary/20 transition-all text-secondary"
+                    className="flex-grow px-6 py-3 bg-[#F1F5F9] border-none rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none text-sm font-black text-[#1E293B] placeholder:text-gray-300 transition-all font-mono"
                     value={newAmbulance.ambulanceNumber}
                     onChange={(e) => setNewAmbulance({...newAmbulance, ambulanceNumber: e.target.value})}
                   />
                 </div>
-                <div className="flex items-center space-x-3">
-                  <span className="text-xs font-bold text-secondary flex-shrink-0">Plate Number:</span>
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm font-black text-[#64748B] uppercase tracking-wider flex-shrink-0">Plate Number:</span>
                   <input
                     required
                     type="text"
                     placeholder="SO-12345"
-                    className="flex-grow px-3 py-2 bg-blue-50/50 border border-blue-100 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-bold placeholder:text-secondary/20 transition-all text-secondary"
+                    className="flex-grow px-6 py-3 bg-[#F1F5F9] border-none rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none text-sm font-black text-[#1E293B] placeholder:text-gray-300 transition-all font-mono"
                     value={newAmbulance.plateNumber}
                     onChange={(e) => setNewAmbulance({...newAmbulance, plateNumber: e.target.value})}
                   />
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="bg-gradient-to-r from-blue-500 to-blue-400 p-0.5 rounded-lg flex items-center shadow-sm">
-                  <div className="bg-white p-0.5 rounded-md">
-                    <div className="bg-primary p-0.5 rounded-sm">
-                      <Plus className="w-3 h-3 text-white" />
-                    </div>
+              {/* Section 1: Vehicle INFO */}
+              <div className="space-y-6">
+                <div className="bg-[#3B82F6] p-2 rounded-2xl flex items-center shadow-lg shadow-blue-200">
+                  <div className="bg-white p-1 rounded-xl">
+                    <Plus className="w-4 h-4 text-[#3B82F6]" />
                   </div>
-                  <span className="ml-2 text-[10px] font-black text-white uppercase tracking-widest italic">Vehicle Information</span>
+                  <span className="ml-4 text-xs font-black text-white uppercase tracking-[0.2em]">Vehicle Information</span>
                 </div>
 
-                <div className="space-y-3 px-1">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xs font-bold text-secondary w-28">Vehicle Details:</span>
-                    <div className="flex-grow grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-6 px-4">
+                  <div className="flex items-center">
+                    <span className="text-sm font-black text-[#64748B] w-32 shrink-0">Vehicle Details:</span>
+                    <div className="flex-grow grid grid-cols-2 gap-4">
                       <input
                         type="text"
                         placeholder="Brand (e.g. Toyota)"
-                        className="px-3 py-1.5 bg-white border border-blue-100 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold placeholder:text-secondary/20 text-secondary"
+                        className="px-6 py-3 bg-white border-2 border-[#F1F5F9] rounded-2xl focus:border-[#3B82F6] outline-none text-sm font-black text-[#1E293B] placeholder:text-gray-300"
                         value={newAmbulance.vehicleBrand}
                         onChange={(e) => setNewAmbulance({...newAmbulance, vehicleBrand: e.target.value})}
                       />
                       <input
                         type="text"
                         placeholder="Model (e.g. Hiace)"
-                        className="px-3 py-1.5 bg-white border border-blue-100 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold placeholder:text-secondary/20 text-secondary"
+                        className="px-6 py-3 bg-white border-2 border-[#F1F5F9] rounded-2xl focus:border-[#3B82F6] outline-none text-sm font-black text-[#1E293B] placeholder:text-gray-300"
                         value={newAmbulance.vehicleModel}
                         onChange={(e) => setNewAmbulance({...newAmbulance, vehicleModel: e.target.value})}
                       />
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xs font-bold text-secondary w-28">Vehicle Model:</span>
+                  <div className="flex items-center">
+                    <span className="text-sm font-black text-[#64748B] w-32 shrink-0">Vehicle Model:</span>
                     <select
-                      className="flex-grow px-3 py-1.5 bg-white border border-blue-100 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231D3557%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px] bg-[right_0.75rem_center] bg-no-repeat text-secondary"
+                      className="flex-grow px-6 py-4 bg-white border-2 border-[#F1F5F9] rounded-2xl focus:border-[#3B82F6] outline-none text-sm font-black text-[#1E293B] appearance-none cursor-pointer"
                       value={newAmbulance.vehicleType}
                       onChange={(e) => setNewAmbulance({...newAmbulance, vehicleType: e.target.value})}
                     >
@@ -673,22 +672,20 @@ export default function AmbulancesPage() {
               </div>
 
               {/* Section 2: Assignment & Location */}
-              <div className="space-y-4">
-                <div className="bg-gradient-to-r from-blue-500 to-blue-400 p-0.5 rounded-lg flex items-center shadow-sm">
-                  <div className="bg-white p-0.5 rounded-md">
-                    <div className="bg-primary p-0.5 rounded-sm">
-                      <Plus className="w-3 h-3 text-white" />
-                    </div>
+              <div className="space-y-6">
+                <div className="bg-[#3B82F6] p-2 rounded-2xl flex items-center shadow-lg shadow-blue-200">
+                  <div className="bg-white p-1 rounded-xl">
+                    <Plus className="w-4 h-4 text-[#3B82F6]" />
                   </div>
-                  <span className="ml-2 text-[10px] font-black text-white uppercase tracking-widest italic">Assignment & Location</span>
+                  <span className="ml-4 text-xs font-black text-white uppercase tracking-[0.2em]">Assignment & Location</span>
                 </div>
 
-                <div className="space-y-3 px-1">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xs font-bold text-secondary w-28">Region:</span>
+                <div className="grid grid-cols-1 gap-6 px-4">
+                  <div className="flex items-center">
+                    <span className="text-sm font-black text-[#64748B] w-32 shrink-0">Region:</span>
                     <select
                       required
-                      className="flex-grow px-3 py-1.5 bg-white border border-blue-100 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231D3557%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px] bg-[right_0.75rem_center] bg-no-repeat text-secondary"
+                      className="flex-grow px-6 py-4 bg-white border-2 border-[#F1F5F9] rounded-2xl focus:border-[#3B82F6] outline-none text-sm font-black text-[#1E293B] appearance-none"
                       value={newAmbulance.regionId}
                       onChange={(e) => setNewAmbulance({...newAmbulance, regionId: e.target.value, districtId: ''})}
                     >
@@ -698,12 +695,12 @@ export default function AmbulancesPage() {
                       ))}
                     </select>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xs font-bold text-secondary w-28">District:</span>
+                  <div className="flex items-center">
+                    <span className="text-sm font-black text-[#64748B] w-32 shrink-0">District:</span>
                     <select
                       required
                       disabled={!newAmbulance.regionId}
-                      className="flex-grow px-3 py-1.5 bg-white border border-blue-100 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231D3557%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px] bg-[right_0.75rem_center] bg-no-repeat text-secondary"
+                      className="flex-grow px-6 py-4 bg-white border-2 border-[#F1F5F9] rounded-2xl focus:border-[#3B82F6] outline-none text-sm font-black text-[#1E293B] appearance-none disabled:bg-[#F8FAFC]"
                       value={newAmbulance.districtId}
                       onChange={(e) => setNewAmbulance({...newAmbulance, districtId: e.target.value})}
                     >
@@ -713,11 +710,11 @@ export default function AmbulancesPage() {
                       ))}
                     </select>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xs font-bold text-secondary w-28">Station:</span>
+                  <div className="flex items-center">
+                    <span className="text-sm font-black text-[#64748B] w-32 shrink-0">Station:</span>
                     <select
                       required
-                      className="flex-grow px-3 py-1.5 bg-white border border-blue-100 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231D3557%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px] bg-[right_0.75rem_center] bg-no-repeat text-secondary"
+                      className="flex-grow px-6 py-4 bg-white border-2 border-[#F1F5F9] rounded-2xl focus:border-[#3B82F6] outline-none text-sm font-black text-[#1E293B] appearance-none"
                       value={newAmbulance.stationId}
                       onChange={(e) => setNewAmbulance({...newAmbulance, stationId: e.target.value})}
                     >
@@ -727,16 +724,16 @@ export default function AmbulancesPage() {
                       ))}
                     </select>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xs font-bold text-secondary w-28">Assigned Driver:</span>
+                  <div className="flex items-center">
+                    <span className="text-sm font-black text-[#64748B] w-32 shrink-0">Assigned Driver:</span>
                     <select
-                      className="flex-grow px-3 py-1.5 bg-white border border-blue-100 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231D3557%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px] bg-[right_0.75rem_center] bg-no-repeat text-secondary"
+                      className="flex-grow px-6 py-4 bg-white border-2 border-[#F1F5F9] rounded-2xl focus:border-[#3B82F6] outline-none text-sm font-black text-[#1E293B] appearance-none"
                       value={newAmbulance.assignedDriverId}
                       onChange={(e) => setNewAmbulance({...newAmbulance, assignedDriverId: e.target.value})}
                     >
                       <option value="">Select driver</option>
                       {drivers.map(driver => (
-                        <option key={driver.id} value={driver.id}>{driver.user?.username}</option>
+                        <option key={driver.id} value={driver.id}>{driver.user?.username || `${driver.firstName} ${driver.lastName}`}</option>
                       ))}
                     </select>
                   </div>
@@ -744,34 +741,33 @@ export default function AmbulancesPage() {
               </div>
 
               {/* Section 3: Status & Condition */}
-              <div className="space-y-4">
-                <div className="bg-gradient-to-r from-blue-500 to-blue-400 p-0.5 rounded-lg flex items-center shadow-sm">
-                  <div className="bg-white p-0.5 rounded-md">
-                    <div className="bg-primary p-0.5 rounded-sm">
-                      <Plus className="w-3 h-3 text-white" />
-                    </div>
+              <div className="space-y-6">
+                <div className="bg-[#3B82F6] p-2 rounded-2xl flex items-center shadow-lg shadow-blue-200">
+                  <div className="bg-white p-1 rounded-xl">
+                    <Plus className="w-4 h-4 text-[#3B82F6]" />
                   </div>
-                  <span className="ml-2 text-[10px] font-black text-white uppercase tracking-widest italic">Status & Condition</span>
+                  <span className="ml-4 text-xs font-black text-white uppercase tracking-[0.2em]">Status & Condition</span>
                 </div>
 
-                <div className="space-y-3 px-1">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xs font-bold text-secondary w-28">Status:</span>
+                <div className="grid grid-cols-1 gap-6 px-4">
+                  <div className="flex items-center">
+                    <span className="text-sm font-black text-[#64748B] w-32 shrink-0">Status:</span>
                     <select
-                      className="flex-grow px-3 py-1.5 bg-white border border-blue-100 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231D3557%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px] bg-[right_0.75rem_center] bg-no-repeat text-secondary"
+                      className="flex-grow px-6 py-4 bg-white border-2 border-[#F1F5F9] rounded-2xl focus:border-[#3B82F6] outline-none text-sm font-black text-[#1E293B] appearance-none"
                       value={newAmbulance.status}
                       onChange={(e) => setNewAmbulance({...newAmbulance, status: e.target.value as AmbulanceStatus})}
                     >
                       <option value="AVAILABLE">Available</option>
+                      <option value="ON_DUTY">On Duty</option>
                       <option value="MAINTENANCE">Maintenance</option>
                       <option value="UNAVAILABLE">Unavailable</option>
                     </select>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xs font-bold text-secondary w-28">Equipment Level:</span>
+                  <div className="flex items-center">
+                    <span className="text-sm font-black text-[#64748B] w-32 shrink-0">Equipment Level:</span>
                     <select
                       required
-                      className="flex-grow px-3 py-1.5 bg-white border border-blue-100 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs font-bold appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231D3557%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px] bg-[right_0.75rem_center] bg-no-repeat text-secondary"
+                      className="flex-grow px-6 py-4 bg-white border-2 border-[#F1F5F9] rounded-2xl focus:border-[#3B82F6] outline-none text-sm font-black text-[#1E293B] appearance-none"
                       value={newAmbulance.equipmentLevelId}
                       onChange={(e) => setNewAmbulance({...newAmbulance, equipmentLevelId: e.target.value})}
                     >
@@ -781,13 +777,13 @@ export default function AmbulancesPage() {
                       ))}
                     </select>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xs font-bold text-secondary w-28">Fuel Level:</span>
-                    <div className="bg-blue-50/50 border border-blue-100 rounded-lg px-3 py-1.5 flex items-center justify-between w-40 relative overflow-hidden group">
-                      <div className="flex items-center space-x-1.5 relative z-10">
-                        <Droplet className="w-4 h-4 text-secondary" />
-                        <div className="flex items-center text-success font-black text-xs">
-                          <Plus className="w-2.5 h-2.5 rotate-45 mr-0.5" />
+                  <div className="flex items-center space-x-6">
+                    <span className="text-sm font-black text-[#64748B] w-32 shrink-0">Fuel Level:</span>
+                    <div className="flex-grow bg-[#F1F5F9] border-none rounded-2xl px-6 py-4 flex items-center justify-between relative overflow-hidden group">
+                      <div className="flex items-center space-x-3 relative z-10">
+                        <Droplet className="w-5 h-5 text-[#3B82F6]" />
+                        <div className="flex items-center text-[#22C55E] font-black text-sm">
+                          <Plus className="w-3 h-3 rotate-45 mr-1" />
                           <span>{newAmbulance.fuelLevel} %</span>
                         </div>
                       </div>
@@ -795,66 +791,66 @@ export default function AmbulancesPage() {
                         type="range"
                         min="0"
                         max="100"
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        className="flex-grow max-w-[200px] h-2 bg-white rounded-full appearance-none cursor-pointer accent-[#3B82F6]"
                         value={newAmbulance.fuelLevel}
                         onChange={(e) => setNewAmbulance({...newAmbulance, fuelLevel: Number(e.target.value)})}
                       />
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xs font-bold text-secondary w-28">Mileage:</span>
-                    <div className="flex-grow flex items-center bg-blue-50/50 border border-blue-100 rounded-lg px-3 py-1.5">
+                  <div className="flex items-center">
+                    <span className="text-sm font-black text-[#64748B] w-32 shrink-0">Mileage:</span>
+                    <div className="flex-grow relative">
                       <input
-                        type="text"
+                        type="number"
                         placeholder="120000"
-                        className="flex-grow bg-transparent border-none outline-none text-secondary font-bold text-xs"
+                        className="w-full px-6 py-4 bg-white border-2 border-[#F1F5F9] rounded-2xl focus:border-[#3B82F6] outline-none text-sm font-black text-[#1E293B]"
                         value={newAmbulance.mileage}
                         onChange={(e) => setNewAmbulance({...newAmbulance, mileage: Number(e.target.value)})}
                       />
-                      <span className="text-secondary/40 font-bold ml-1 text-[10px]">km</span>
+                      <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black text-gray-300 uppercase">km</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Section 4: Notes */}
-              <div className="space-y-3 px-1">
-                <span className="text-xs font-bold text-secondary">Notes:</span>
+              <div className="px-4">
+                <span className="text-sm font-black text-[#64748B] block mb-3">Notes:</span>
                 <textarea
-                  rows={3}
                   placeholder="Ready for emergency dispatch"
-                  className="w-full px-4 py-3 bg-white border border-blue-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-secondary font-medium transition-all shadow-sm text-xs"
+                  className="w-full px-6 py-4 bg-white border-2 border-[#F1F5F9] rounded-3xl focus:border-[#3B82F6] outline-none text-sm font-medium text-[#1E293B] min-h-[100px]"
                   value={newAmbulance.notes}
                   onChange={(e) => setNewAmbulance({...newAmbulance, notes: e.target.value})}
                 />
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-6 flex gap-4 px-1 pb-2">
-                <button 
-                  type="button" 
-                  className="flex-1 py-4 bg-gradient-to-b from-slate-400 to-slate-500 text-white font-black rounded-xl shadow-md hover:-translate-y-0.5 transition-all text-[10px] uppercase tracking-widest"
+              <div className="grid grid-cols-2 gap-6 pt-4 px-4 pb-4">
+                <Button 
+                  type="button"
+                  variant="outline" 
                   onClick={() => setIsAddModalOpen(false)}
+                  className="py-8 rounded-2xl text-sm font-black text-[#64748B] uppercase tracking-widest bg-[#F8FAFC] border-none hover:bg-gray-200 transition-all"
                 >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  className="flex-[1.5] py-4 bg-gradient-to-b from-primary to-destructive text-white font-black rounded-xl shadow-md hover:-translate-y-0.5 transition-all text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 disabled:opacity-50 disabled:translate-y-0"
+                  CANCEL
+                </Button>
+                <Button 
+                  type="submit"
                   disabled={isSubmitting}
+                  className="py-8 rounded-2xl text-sm font-black text-white uppercase tracking-widest bg-gradient-to-r from-red-600 to-red-500 shadow-xl shadow-red-200 hover:shadow-red-300 transition-all flex items-center justify-center gap-3 border-none"
                 >
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                  {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                     <>
-                      <span>Create Ambulance</span>
-                      <X className="w-4 h-4 rotate-[135deg]" />
+                      CREATE AMBULANCE
+                      <Plus className="w-6 h-6" />
                     </>
                   )}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
         </div>
       )}
+
 
       {/* Details Modal (Modified for real data) */}
       {showDetails && selectedAmbulance && (

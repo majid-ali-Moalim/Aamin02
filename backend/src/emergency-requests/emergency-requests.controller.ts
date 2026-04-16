@@ -24,6 +24,7 @@ import { EmergencyRequestStatus } from '@prisma/client';
 export class EmergencyRequestsController {
   constructor(private readonly emergencyRequestsService: EmergencyRequestsService) {}
 
+  @Public()
   @Post()
   @Roles('PATIENT', 'ADMIN', 'DISPATCHER')
   @ApiOperation({ summary: 'Create a new emergency request' })

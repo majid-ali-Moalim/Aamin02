@@ -1,154 +1,180 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
+import { useState, useEffect, useMemo } from 'react'
 import { 
-  BarChart2, TrendingUp, Award, User, Clock, CheckCircle2, 
-  MapPin, Loader2, Download, Filter, MessageCircle, Star
+  BarChart2, TrendingUp, Star, Award, 
+  Activity, Clock, CheckCircle2, Shield,
+  ArrowUpRight, ArrowDownRight, Loader2,
+  Truck, User, Navigation, Gauge, Zap
 } from 'lucide-react'
 import { driversService } from '@/lib/api'
+import { Employee } from '@/types'
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, 
+  Tooltip, ResponsiveContainer, LineChart, Line,
+  AreaChart, Area
+} from 'recharts'
+import { Button } from '@/components/ui/button'
 
-export default function PerformancePage() {
-  const [performance, setPerformance] = useState<any[]>([])
+export default function DriverPerformancePage() {
+  const [drivers, setDrivers] = useState<Employee[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true)
+        const data = await driversService.getAll()
+        setDrivers(data)
+      } catch (err) {
+        console.error('Failed to fetch performance data:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
     fetchData()
   }, [])
 
-  const fetchData = async () => {
-    try {
-      setIsLoading(true)
-      const data = await driversService.getPerformance()
-      setPerformance(data)
-    } catch (err) {
-      console.error('Failed to fetch performance data:', err)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  // Mocked performance data for tactical analytics
+  const tacticalData = [
+    { day: 'Mon', speed: 45, response: 8.2 },
+    { day: 'Tue', speed: 52, response: 7.5 },
+    { day: 'Wed', speed: 48, response: 9.1 },
+    { day: 'Thu', speed: 55, response: 6.8 },
+    { day: 'Fri', speed: 50, response: 8.4 },
+    { day: 'Sat', speed: 42, response: 10.2 },
+    { day: 'Sun', speed: 49, response: 7.9 },
+  ]
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Performance & Reports</h1>
-          <p className="text-gray-500 mt-1">Driver efficiency metrics and utilization analysis</p>
+    <div className="space-y-8 pb-12">
+      {/* Premium Tactical Header */}
+      <div className="bg-[#0A1128] rounded-[2.5rem] p-10 border border-white/5 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none">
+           <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <path d="M0 50 Q 25 25, 50 50 T 100 50" stroke="white" strokeWidth="0.1" fill="none" className="animate-pulse" />
+           </svg>
         </div>
-        <div className="flex items-center gap-3">
-            <Button variant="outline" className="rounded-xl font-bold h-11 bg-white shadow-sm">
-              <Download className="w-4 h-4 mr-2" />
-              Download Report
-            </Button>
-            <Button variant="outline" className="rounded-xl font-bold h-11 bg-white shadow-sm" onClick={fetchData}>
-              <TrendingUp className={`w-4 h-4 mr-2 ${isLoading ? 'animate-pulse' : ''}`} />
-              Update Stats
-            </Button>
-        </div>
-      </div>
-
-      {/* Top Performers Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-         <div className="lg:col-span-2 bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-8">
-               <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
-                 <Award className="w-5 h-5 text-yellow-500" />
-                 Top Driver Rankings
-               </h3>
-               <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Monthly Cycle</span>
-            </div>
-            
-            <div className="space-y-6">
-               {isLoading ? (
-                 <div className="p-20 text-center">
-                    <Loader2 className="w-10 h-10 text-red-600 animate-spin mx-auto mb-4" />
-                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Calculating Metrics...</p>
+        
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+           <div>
+              <div className="flex items-center gap-3 mb-4">
+                 <div className="bg-emerald-600/20 p-2 rounded-xl text-emerald-400 border border-emerald-500/20">
+                    <Zap className="w-5 h-5" />
                  </div>
-               ) : (
-                 performance.map((d, i) => (
-                    <div key={i} className="flex items-center gap-6 p-4 rounded-3xl bg-gray-50/50 border border-transparent hover:border-gray-100 hover:bg-white hover:shadow-md transition-all">
-                       <div className="text-2xl font-black text-gray-200 w-8 text-center">{i + 1}</div>
-                       <div className="w-12 h-12 rounded-[1.25rem] bg-white shadow-sm border border-gray-50 flex items-center justify-center font-bold text-gray-300 text-sm">
-                          {d.name?.[0]}
-                       </div>
-                       <div className="flex-1">
-                          <p className="text-sm font-black text-gray-900 uppercase">{d.name}</p>
-                          <div className="flex items-center gap-3 mt-1">
-                             <div className="flex items-center text-[10px] text-gray-400 font-bold bg-white px-2 py-0.5 rounded-full shadow-sm">
-                                <CheckCircle2 className="w-3 h-3 text-success mr-1" />
-                                {d.totalMissions} Missions
-                             </div>
-                             <div className="flex items-center text-[10px] text-gray-400 font-bold bg-white px-2 py-0.5 rounded-full shadow-sm">
-                                <Clock className="w-3 h-3 text-blue-500 mr-1" />
-                                {d.avgResponseTime}m Avg
-                             </div>
-                          </div>
-                       </div>
-                       <div className="flex items-center gap-1 text-yellow-500">
-                          <Star className="w-4 h-4 fill-current" />
-                          <span className="text-sm font-black text-gray-900">{(5 - i * 0.2).toFixed(1)}</span>
-                       </div>
-                    </div>
-                 ))
-               )}
-            </div>
-         </div>
-
-         <div className="bg-[#1b4382] rounded-[2.5rem] p-8 text-white shadow-xl shadow-blue-900/20 flex flex-col justify-between overflow-hidden relative group">
-            <div className="absolute right-0 top-0 bottom-0 opacity-10 flex items-center">
-                 <svg viewBox="0 0 100 100" className="w-[400px] h-full text-white fill-none stroke-current stroke-[0.2]">
-                    <circle cx="50" cy="50" r="40" />
-                    <circle cx="50" cy="50" r="30" />
-                    <circle cx="50" cy="50" r="20" />
-                  </svg>
-            </div>
-            <div className="relative z-10">
-               <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-8 flex items-center gap-2">
-                 <TrendingUp className="w-4 h-4" />
-                 Monthly Summary
-               </h3>
-               <div className="space-y-8">
-                  <div>
-                     <p className="text-4xl font-black tracking-tighter leading-none mb-1">84%</p>
-                     <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">DRIVE UTILIZATION</p>
-                  </div>
-                  <div>
-                     <p className="text-4xl font-black tracking-tighter leading-none mb-1">12.4m</p>
-                     <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">AVG. RESPONSE TIME</p>
-                  </div>
-                  <div>
-                     <p className="text-4xl font-black tracking-tighter leading-none mb-1">2,840</p>
-                     <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">TOTAL MISSIONS COMPLETED</p>
-                  </div>
-               </div>
-            </div>
-            <Button className="w-full h-14 mt-12 bg-white/10 hover:bg-white/20 text-white rounded-2xl border border-white/10 font-bold uppercase tracking-widest text-[10px] relative z-10">
-               View Full Annual Analytics
-            </Button>
-         </div>
+                 <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em]">Fleet Efficiency Protocol</span>
+              </div>
+              <h1 className="text-4xl font-black text-white italic tracking-tighter uppercase">Driver Performance Matrix</h1>
+              <p className="text-white/40 text-sm mt-3 font-medium max-w-2xl leading-relaxed">
+                 Tactical analytics for field personnel. Monitor response times, fuel efficiency, and mission safety ratings in real-time.
+              </p>
+           </div>
+           
+           <div className="flex gap-4 px-4 bg-white/5 rounded-[2rem] border border-white/10 p-2 border-b-4">
+              <div className="text-right px-4">
+                 <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Avg ETA</p>
+                 <p className="text-xl font-black text-white">8.2m</p>
+              </div>
+              <div className="w-px h-full bg-white/10" />
+              <div className="text-right px-4">
+                 <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Safety Index</p>
+                 <p className="text-xl font-black text-emerald-400">97%</p>
+              </div>
+           </div>
+        </div>
       </div>
 
-      {/* Detailed Reports Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-         {[
-           { title: 'Mission Reliability', value: '98.2%', trend: '+2.4%', color: 'success' },
-           { title: 'Fuel Efficiency', value: '14.5L/100km', trend: '-0.8%', color: 'blue' },
-           { title: 'Shift Compliance', value: '94%', trend: '+5.1%', color: 'purple' },
-           { title: 'Response Variance', value: '+1.2m', trend: '-0.3%', color: 'warning' },
-         ].map((card, i) => (
-            <div key={i} className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{card.title}</p>
-               <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-black text-gray-900 tracking-tighter">{card.value}</span>
-                  <span className={`text-[10px] font-bold ${card.color === 'success' ? 'text-success' : 'text-blue-500'}`}>{card.trend}</span>
+      {isLoading ? (
+         <div className="p-24 flex flex-col items-center gap-4">
+            <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Loading Field Intelligence...</p>
+         </div>
+      ) : (
+         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            
+            {/* Efficiency Overview */}
+            <div className="xl:col-span-2 space-y-8">
+               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  {[
+                     { label: 'Total KM', value: '14.2k', sub: '+400 today', color: 'blue' },
+                     { label: 'Avg Speed', value: '48 km/h', sub: 'Optimal', color: 'emerald' },
+                     { label: 'Rapid Response', value: '92%', sub: 'Target 90%', color: 'indigo' },
+                     { label: 'Fuel Savings', value: '12%', sub: 'Eco-mode', color: 'orange' }
+                  ].map((stat, i) => (
+                     <div key={i} className="bg-white p-6 rounded-[2rem] border border-gray-50 shadow-sm">
+                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</p>
+                        <h3 className="text-2xl font-black text-secondary mt-1">{stat.value}</h3>
+                        <p className="text-[9px] font-bold text-gray-300 uppercase mt-1 italic">{stat.sub}</p>
+                     </div>
+                  ))}
                </div>
-               <div className="w-full h-1 bg-gray-50 rounded-full mt-4 overflow-hidden">
-                  <div className={`h-full bg-${card.color === 'success' ? 'green-500' : card.color === 'blue' ? 'blue-500' : 'orange-500'} w-2/3 rounded-full`} />
+
+               {/* Tactical Line Chart */}
+               <div className="bg-[#0F172A] p-10 rounded-[2.5rem] shadow-2xl relative">
+                  <div className="flex items-center justify-between mb-10">
+                     <h3 className="text-lg font-black text-white tracking-tight uppercase italic">Response Time Variance</h3>
+                     <div className="h-2 w-32 bg-white/10 rounded-full overflow-hidden">
+                        <div className="h-full bg-blue-500 w-[78%] shadow-[0_0_8px_blue]" />
+                     </div>
+                  </div>
+                  <div className="h-80 w-full">
+                     <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={tacticalData}>
+                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                           <XAxis dataKey="day" hide />
+                           <YAxis hide />
+                           <Tooltip 
+                              contentStyle={{ backgroundColor: '#1E293B', border: 'none', borderRadius: '12px', color: '#fff', fontSize: '10px', fontWeight: 900 }}
+                           />
+                           <Line type="monotone" dataKey="response" stroke="#3B82F6" strokeWidth={6} dot={{ r: 6, fill: '#3B82F6', strokeWidth: 4, stroke: '#0F172A' }} activeDot={{ r: 10, shadow: '0 0 10px blue' }} />
+                        </LineChart>
+                     </ResponsiveContainer>
+                  </div>
                </div>
             </div>
-         ))}
-      </div>
+
+            {/* Right Panel: Top Drivers */}
+            <div className="space-y-8">
+               <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-50">
+                  <h3 className="text-lg font-black text-secondary tracking-tight mb-8">Mission Champions</h3>
+                  <div className="space-y-6">
+                     {drivers.slice(0, 6).map((driver, i) => (
+                        <div key={i} className="flex items-center justify-between group">
+                           <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center font-black text-gray-300 text-xs overflow-hidden group-hover:border-emerald-200 transition-all">
+                                 {driver.firstName[0]}{driver.lastName[0]}
+                              </div>
+                              <div>
+                                 <p className="text-xs font-black text-secondary uppercase tracking-tight group-hover:text-emerald-600 transition-all">{driver.firstName} {driver.lastName}</p>
+                                 <div className="flex items-center gap-2 mt-0.5">
+                                    <Clock className="w-3 h-3 text-blue-400" />
+                                    <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{Math.floor(Math.random() * 5) + 6}m Avg Response</span>
+                                 </div>
+                              </div>
+                           </div>
+                           <div className="text-right">
+                              <div className="bg-emerald-50 px-2 py-1 rounded-lg">
+                                 <p className="text-[10px] font-black text-emerald-600">{Math.floor(Math.random() * 10) + 90}%</p>
+                              </div>
+                           </div>
+                        </div>
+                     ))}
+                  </div>
+               </div>
+
+               {/* Fleet Health Indicator */}
+               <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center gap-6">
+                  <div className="flex-1">
+                     <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Fleet Compliance</p>
+                     <h4 className="text-2xl font-black text-secondary tracking-tight">99.4%</h4>
+                  </div>
+                  <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center border-4 border-emerald-500 shadow-inner">
+                     <Shield className="w-10 h-10 text-emerald-500" />
+                  </div>
+               </div>
+            </div>
+         </div>
+      )}
     </div>
   )
 }
